@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const currentPage = 'omicron.html'; // Текущая страница
+  const currentPage = 'index.html'; // Текущая страница
 
   const links = document.querySelectorAll('.letter-link');
 
