@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Omicron Project</title>
   <!-- Подключение CSS -->
-  <link rel="stylesheet" href="omicron.css">
-  <!-- Подключение Three.js через CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="omicron.css" />
+  <!-- Подключение Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 </head>
 <body>
-<!-- Контейнер для Three.js сцены -->
-<div id="three-container"></div>
 
-<!-- Космический фон -->
-<div class="stars"></div>
-<div class="clouds"></div>
-<div class="comets"></div> <!-- Контейнер для комет -->
+<!-- Canvas для анимации звёзд -->
+<canvas id="starfield"></canvas>
 
-<!-- Заголовок страницы -->
+<!-- Контейнер для Three.js-сцены (планета) -->
+<div id="three-container">
+  <!-- Анимированная круговая надпись -->
+  <div class="circular-text">
+    Developed by Dmitry Gaydabura
+  </div>
+</div>
+
+<!-- Контейнер для комет -->
+<div class="comets"></div>
+
 <header>
   <h1>Omicron Project</h1>
   <p>Welcome to the eternity</p>
@@ -178,6 +184,6 @@
 </main>
 
 <!-- Подключение JavaScript -->
-<script src="omicron.js"></script>
+<script src="omicron.js" defer></script>
 </body>
 </html>
