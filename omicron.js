@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Генерация комет
   const cometsContainer = document.querySelector('.comets');
-  const cometInterval = 1000; // Интервал появления комет в миллисекундах (7 секунд)
+  const cometInterval = 1000; // Интервал появления комет в миллисекундах (1 секунда)
 
   function createComet() {
     const comet = document.createElement('div');
@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(startFromLeft) {
       comet.style.left = `-10px`; // Начинаем за пределами экрана слева
       comet.style.top = `${Math.random() * 100}%`;
+      comet.style.transform = `rotate(45deg)`; // Стандартное направление
     } else {
       comet.style.left = `100%`; // Начинаем за пределами экрана справа
       comet.style.top = `${Math.random() * 100}%`;
@@ -114,6 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const geometry = new THREE.SphereGeometry(1.5, 64, 64);
   const material = new THREE.MeshStandardMaterial({
     map: swampTexture,
+    transparent: true,
+    opacity: 0.8,
+    metalness: 0.1,
+    roughness: 0.5
   });
   const planet = new THREE.Mesh(geometry, material);
   scene.add(planet);
@@ -141,10 +146,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // Анимация вращения планеты
   function animate() {
     requestAnimationFrame(animate);
-    planet.rotation.y += 0.001; // Скорость вращения планеты
+    planet.rotation.y += 0.005; // Скорость вращения планеты
     atmosphere.rotation.y += 0.001;
     renderer.render(scene, camera);
   }
 
   animate();
+
+  // Эффект следования панелей за курсором
+  const letterBoxes = document.querySelectorAll('.letter-box');
+
+  document.addEventListener('mousemove', (e) => {
+    const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    const mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    letterBoxes.forEach(box => {
+      const rotateX = mouseY * 30;
+      const rotateY = mouseX * 30;
+      box.style.setProperty('--rotateX', `${rotateX}deg`);
+      box.style.setProperty('--rotateY', `${rotateY}deg`);
+    });
+  });
+
+  document.addEventListener('mouseleave', () => {
+    letterBoxes.forEach(box => {
+      box.style.setProperty('--rotateX', `0deg`);
+      box.style.setProperty('--rotateY', `0deg`);
+    });
+  });
 });

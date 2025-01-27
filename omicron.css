@@ -42,22 +42,66 @@ main {
   gap: 20px;
   max-width: 1000px;
   margin: auto;
+  perspective: 1500px; /* Увеличенная перспектива для более глубокого 3D-эффекта */
 }
 
 .letter-box {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid #e0b3ff;
+  /* Обновленный стиль для 3D-квадратных панелей с видимой толщиной */
+  position: relative;
+  background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   padding: 20px;
   text-align: center;
-  transition: transform 0.3s, background 0.3s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(10px); /* Эффект размытия фона */
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5); /* Усиленная тень для большего контраста */
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rotateX, 0deg)) rotateY(var(--rotateY, 0deg)) scale(1);
+}
+
+/* Псевдоэлементы для создания толщины панели */
+.letter-box::before,
+.letter-box::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.05); /* Тонкий слой для имитации толщины */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transform: translateZ(-10px); /* Смещение назад для создания толщины */
+  pointer-events: none; /* Чтобы не мешали взаимодействию */
+}
+
+/* Альтернативный псевдоэлемент для более реалистичной толщины */
+.letter-box::after {
+  background: rgba(0, 0, 0, 0.1); /* Тёмный слой для глубины */
+  transform: translateZ(-20px) rotateY(180deg);
 }
 
 .letter-box:hover {
-  transform: scale(1.05);
-  background: rgba(224, 179, 255, 0.3);
+  /* Плавное масштабирование и усиленное вращение при наведении */
+  transform: rotateX(var(--rotateX, 0deg)) rotateY(var(--rotateY, 0deg)) scale(1.1);
+  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.7); /* Усиленная тень при наведении */
 }
 
+/* Стили для ссылок */
+.letter-link.inactive {
+  pointer-events: none; /* Отключение кликов */
+  cursor: default;
+  /* Дополнительные стили для визуальной неактивности */
+  opacity: 0.6;
+}
+
+.letter-link.active {
+  cursor: pointer;
+}
+
+/* Стили для текста ссылок */
 .letter-link {
   text-decoration: none;
   color: #ffffff;
@@ -79,13 +123,6 @@ main {
 .letter-name {
   font-size: 1.2em;
   color: #d1a3ff;
-}
-
-/* Активная ссылка */
-.letter-link.active {
-  border: 2px solid #ff66cc;
-  background: rgba(255, 102, 204, 0.5);
-  border-radius: 10px;
 }
 
 /* Космический фон с динамическими звёздами */
@@ -193,6 +230,9 @@ main {
   width: 400px; /* Ширина контейнера */
   height: 400px; /* Высота контейнера */
   z-index: 5; /* Размещаем поверх остальных элементов */
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 /* Адаптивность */
