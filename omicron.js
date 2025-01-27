@@ -1,13 +1,15 @@
-// ========= Конфигурационные значения =============
+// ========= ПАРАМЕТРЫ =========
 const NUM_STARS = 1000;        // Количество звёзд
-const COMET_INTERVAL = 4000;   // Интервал в мс между появлениями комет
-const MAX_COMETS = 10;         // Макс. одновременно летящих комет
+const COMET_INTERVAL = 4000;   // Интервал между появлениями комет (в мс)
+const MAX_COMETS = 10;         // Максимальное количество одновременно летящих комет
 
-// ========= Глобальные переменные для звёзд =
-let canvas, ctx;
-let stars = [];
+// ========= ГЛОБАЛЬНЫЕ =========
+let canvas, ctx;       // для звёздного фона
+let stars = [];        // массив звёзд
+let scene, camera, renderer; // Three.js
+let planet, atmosphere;      // Mesh для планеты и атмосферы
 
-// Инициализация canvas и ресайз
+// ================== CANVAS ЗВЁЗД =====================
 function initCanvas() {
   canvas = document.getElementById('starfield');
   ctx = canvas.getContext('2d');
@@ -20,33 +22,29 @@ function initCanvas() {
     stars.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      size: Math.random() * 2 + 1,    // 1..3 px
-      alpha: Math.random(),          // начальная прозрачность
+      size: Math.random() * 2 + 1,  // 1..3 px
+      alpha: Math.random(),         // начальная прозрачность
       alphaChange: (Math.random() * 0.02) * (Math.random() > 0.5 ? 1 : -1)
-      // небольшое случайное изменение прозрачности
     });
   }
 }
 
-// Подгонка размера canvas к окну
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 
-// Анимация звёзд
 function animateStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Рисуем и анимируем звёзды (мерцание)
-  for (let s of stars) {
+  for (const s of stars) {
     s.alpha += s.alphaChange;
     if (s.alpha <= 0) {
       s.alpha = 0;
-      s.alphaChange = -s.alphaChange; // меняем направление
+      s.alphaChange *= -1;
     } else if (s.alpha >= 1) {
       s.alpha = 1;
-      s.alphaChange = -s.alphaChange;
+      s.alphaChange *= -1;
     }
     ctx.globalAlpha = s.alpha;
     ctx.fillStyle = "#fff";
@@ -56,11 +54,9 @@ function animateStars() {
   requestAnimationFrame(animateStars);
 }
 
-// ====================== Three.js планета =========================
-let scene, camera, renderer, planet, atmosphere;
 
+// ================== ТРИ.ЖС ПЛАНЕТА ===================
 function initPlanet() {
-  // Контейнер для рендера
   const container = document.getElementById('three-container');
 
   // Сцена
@@ -73,7 +69,8 @@ function initPlanet() {
       0.1,
       1000
   );
-  camera.position.z = 5;
+  camera.position.set(0, 0, 5);
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   // Рендерер
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -81,21 +78,19 @@ function initPlanet() {
   container.appendChild(renderer.domElement);
 
   // Свет
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Увеличенная интенсивность
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
   scene.add(ambientLight);
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1); // Увеличенная интенсивность
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
   directionalLight.position.set(5, 3, 5);
   scene.add(directionalLight);
 
-  // Загрузчик текстур
-  const textureLoader = new THREE.TextureLoader();
-
   // Текстура планеты
-  const planetTexture = textureLoader.load('assets/textures/Swamp.png', onLoadTexture, onProgress, onError);
+  const textureLoader = new THREE.TextureLoader();
+  const planetTexture = textureLoader.load('assets/textures/Swamp.png');
 
-  // Геометрия и материал планеты
-  const geometry = new THREE.SphereGeometry(1.5, 64, 64);
+  // Геометрия планеты (радиус 1.3)
+  const geometry = new THREE.SphereGeometry(1.3, 64, 64);
   const material = new THREE.MeshStandardMaterial({
     map: planetTexture,
     metalness: 0.2,
@@ -104,34 +99,22 @@ function initPlanet() {
   planet = new THREE.Mesh(geometry, material);
   scene.add(planet);
 
-  // Атмосфера (лёгкое свечение)
-  const atmosphereGeometry = new THREE.SphereGeometry(1.55, 64, 64);
-  const atmosphereMaterial = new THREE.MeshBasicMaterial({
+  // Атмосфера
+  const atmosphereGeo = new THREE.SphereGeometry(1.35, 64, 64);
+  const atmosphereMat = new THREE.MeshBasicMaterial({
     color: 0x7ec0ee,
     transparent: true,
     opacity: 0.2,
     side: THREE.DoubleSide
   });
-  atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+  atmosphere = new THREE.Mesh(atmosphereGeo, atmosphereMat);
   scene.add(atmosphere);
 
   // Ресайз
   window.addEventListener('resize', onWindowResize, false);
 
+  // Стартуем анимацию
   animatePlanet();
-}
-
-// Обработчики загрузки текстур
-function onLoadTexture(texture) {
-  console.log('Текстура загружена:', texture);
-}
-
-function onProgress(xhr) {
-  console.log((xhr.loaded / xhr.total * 100) + '% загружено');
-}
-
-function onError(err) {
-  console.error('Ошибка загрузки текстуры:', err);
 }
 
 function onWindowResize() {
@@ -141,15 +124,54 @@ function onWindowResize() {
   renderer.setSize(container.clientWidth, container.clientHeight);
 }
 
-// Анимация планеты
 function animatePlanet() {
   requestAnimationFrame(animatePlanet);
+  // Лёгкое вращение планеты
   planet.rotation.y += 0.005;
   atmosphere.rotation.y += 0.001;
+
   renderer.render(scene, camera);
 }
 
-// ================== 3D-эффект для карточек ======================
+
+// ================= КРУГОВАЯ НАДПИСЬ ==================
+function initCircularText() {
+  const circularTextElem = document.querySelector('.circular-text');
+  if (!circularTextElem) return;
+
+  const text = circularTextElem.textContent.trim();
+  circularTextElem.textContent = ''; // очищаем
+
+  // Контейнер для букв
+  const container = document.createElement('div');
+  container.classList.add('text-container');
+  circularTextElem.appendChild(container);
+
+  const letters = text.split('');
+  const total = letters.length;
+
+  // Шаг угла
+  const angleStep = 360 / total;
+  // Радиус (примерно 66 px, чтобы буквы шли по кругу внутри 200×200)
+  const radius = 120; // Регулируйте радиус по необходимости
+
+  letters.forEach((letter, i) => {
+    const span = document.createElement('span');
+    span.textContent = letter;
+
+    const angle = angleStep * i;
+    // Разворачиваем букву так, чтобы её нижняя часть смотрела к центру
+    span.style.transform = `
+      rotate(${angle}deg)
+      translate(${radius}px)
+      rotate(90deg)
+    `;
+    container.appendChild(span);
+  });
+}
+
+
+// ================== 3D-ЭФФЕКТ КАРТОЧЕК ======================
 function initLetterBoxes() {
   const letterBoxes = document.querySelectorAll('.letter-box');
 
@@ -176,9 +198,11 @@ function initLetterBoxes() {
   });
 }
 
-// ================== Генерация комет ===============================
+
+// ================== ГЕНЕРАЦИЯ КОМЕТ ===============================
 function generateComets() {
   const cometsContainer = document.querySelector('.comets');
+  if (!cometsContainer) return;
 
   function createComet() {
     // Проверяем, не превышено ли максимальное количество комет
@@ -225,42 +249,22 @@ function generateComets() {
   }
 }
 
-// ================== Добавление анимированной круговой надписи ===============================
-function initCircularText() {
-  const circularTextContainer = document.querySelector('.circular-text');
-  const text = circularTextContainer.textContent.trim();
-  circularTextContainer.textContent = ''; // Очищаем текст для последующей генерации букв
 
-  const radius = 80; // Радиус круга, по которому будут размещаться буквы
-  const letters = text.split('');
-  const total = letters.length;
-  const angleStep = 360 / total;
-
-  letters.forEach((letter, index) => {
-    const span = document.createElement('span');
-    span.textContent = letter;
-    const angle = angleStep * index;
-    // Устанавливаем трансформацию: поворот на угол, смещение по X на радиус, обратный поворот для правильного отображения
-    span.style.transform = `rotate(${angle}deg) translateX(${radius}px) rotate(${-angle}deg)`;
-    circularTextContainer.appendChild(span);
-  });
-}
-
-// ================== Запуск всего ===============================
+// ================== ЗАПУСК ВСЕГО ===============================
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Инициализируем канвас и запускаем анимацию звёзд
+  // 1. Звёздный фон
   initCanvas();
   animateStars();
 
-  // 2. Генерируем кометы
+  // 2. Кометы
   generateComets();
 
-  // 3. Инициализируем планету Three.js
+  // 3. Планета (Three.js)
   initPlanet();
 
-  // 4. 3D-эффект для карточек
+  // 4. 3D-эффект при наведении на карточки
   initLetterBoxes();
 
-  // 5. Инициализируем круговую надпись
+  // 5. Кольцо текста (без анимации вращения)
   initCircularText();
 });

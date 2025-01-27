@@ -1,4 +1,4 @@
-/* Сброс базовых отступов и размеров */
+/* Сброс отступов и размеров */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -19,7 +19,7 @@ html, body {
 header {
   text-align: center;
   padding: 60px 20px;
-  /* Градиентно-прозрачный фон: от полупрозрачного синего к полностью прозрачному */
+  /* Градиентно-прозрачный фон сверху */
   background: linear-gradient(to bottom, rgba(25, 25, 112, 0.8), rgba(25, 25, 112, 0));
   position: relative;
   z-index: 10; /* Над canvas */
@@ -54,7 +54,8 @@ main {
   gap: 20px;
   max-width: 1000px;
   margin: 0 auto;
-  perspective: 1500px; /* Перспектива для 3D */
+  /* Убираем 3D-перспективу, чтобы ничего не «ломало» */
+  /* perspective: 1500px; */
 }
 
 /* Каждая карточка */
@@ -72,7 +73,11 @@ main {
   transform-style: preserve-3d;
 }
 
-/* Псевдоэлементы для имитации толщины */
+.letter-box:hover {
+  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.7);
+}
+
+/* Стили для псевдоэлементов толщины (необязательно) */
 .letter-box::before,
 .letter-box::after {
   content: '';
@@ -97,12 +102,7 @@ main {
   transform: translateZ(-20px) rotateY(180deg);
 }
 
-/* При наведении чуть увеличиваем */
-.letter-box:hover {
-  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.7);
-}
-
-/* Стили для ссылок */
+/* Стили ссылок */
 .letter-link {
   text-decoration: none;
   color: #ffffff;
@@ -120,7 +120,7 @@ main {
   opacity: 0.6;
 }
 
-/* Активные ссылки */
+/* Активная ссылка */
 .letter-link.active {
   cursor: pointer;
 }
@@ -145,7 +145,7 @@ main {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1; /* под контентом */
+  z-index: 1; /* под всем контентом */
   width: 100%;
   height: 100%;
   display: block;
@@ -162,7 +162,7 @@ main {
   z-index: 5; /* Над canvas и контентом */
 }
 
-/* Стили для комет */
+/* Стиль одной кометы */
 .comet {
   position: absolute;
   width: 3px;
@@ -171,7 +171,7 @@ main {
   border-radius: 50%;
   opacity: 0;
   transform: rotate(45deg);
-  animation: cometMove 1.5s linear forwards; /* Уменьшил длительность анимации */
+  animation: cometMove 1.5s linear forwards;
 }
 
 @keyframes cometMove {
@@ -185,79 +185,76 @@ main {
   }
 }
 
-/* Дополнительные классы для разных цветов комет */
+/* Цвета комет */
 .comet.blue {
   background: linear-gradient(45deg, rgba(0, 191, 255, 1), rgba(0, 191, 255, 0));
 }
-
 .comet.purple {
   background: linear-gradient(45deg, rgba(138, 43, 226, 1), rgba(138, 43, 226, 0));
 }
-
 .comet.white {
   background: linear-gradient(45deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
 
-/* Контейнер для планеты Three.js */
+/* Контейнер для планеты и надписи */
 #three-container {
   position: fixed;
-  bottom: 20px; /* Расстояние от нижнего края */
-  right: 20px; /* Расстояние от правого края */
-  width: 200px; /* Уменьшенный размер */
-  height: 200px; /* Уменьшенный размер */
-  z-index: 15; /* Более высокий z-index для переднего плана */
-  border-radius: 15px;
-  overflow: visible; /* Позволяет отображать выходящие элементы */
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  bottom: 20px;
+  right: 20px;
+  width: 200px;   /* Размер контейнера */
+  height: 200px;
+  z-index: 15;
   background: transparent;
+  overflow: visible;
 }
 
-/* Стили для анимированной круговой надписи */
+/* Круговая надпись */
 .circular-text {
   position: absolute;
-  top: -30px; /* Размещаем над планетой */
+  /* Центрируем надпись относительно контейнера */
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  width: 160px; /* Немного увеличиваем размер для лучшего размещения */
+  transform: translate(-50%, -50%);
+
+  width: 160px;
   height: 160px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none; /* Не мешает взаимодействию с планетой */
+
+  pointer-events: none; /* Чтобы мышь "прозрачна" для планеты */
+  overflow: visible;
 }
 
-.circular-text::before {
-  content: '';
-  position: absolute;
+/* Контейнер для букв (без анимации) */
+.circular-text .text-container {
+  position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5); /* Появление круга */
+  /* Добавляем анимацию вращения против часовой стрелки */
+  animation: spin 20s linear infinite;
 }
 
-/* Стили для букв */
-.circular-text span {
-  position: absolute;
-  width: 1em;
-  height: 1em;
-  text-align: center;
-  transform-origin: 80px; /* Радиус круга, совпадающий с шириной */
-  font-size: 12px;
-  color: #ffffff;
-  text-shadow: 0 0 5px #ffffff;
-  user-select: none;
-  /* Добавляем анимацию вращения каждой буквы */
-  animation: spinLetter 10s linear infinite;
-}
-
-@keyframes spinLetter {
+/* Анимация вращения против часовой стрелки */
+@keyframes spin {
   from {
-    transform: rotate(0deg) translateX(80px) rotate(0deg);
+    transform: rotate(0deg);
   }
   to {
-    transform: rotate(360deg) translateX(80px) rotate(-360deg);
+    transform: rotate(-360deg);
   }
+}
+
+/* Каждая буква, расположенная по кольцу */
+.circular-text .text-container span {
+  position: absolute;
+  /* Центр кольца — это центр #three-container */
+  left: 50%;
+  top: 50%;
+  transform-origin: 0 0; /* вращение от верхнего левого угла спана */
+
+  font-weight: 900; /* Дважды жирнее */
+  font-size: 24px;
+  color: #fff;
+  text-shadow: 0 0 5px #fff;
+  user-select: none;
 }
 
 /* Адаптивность */
@@ -297,13 +294,10 @@ main {
   .circular-text {
     width: 130px;
     height: 130px;
-    top: -20px;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
   }
 
-  .circular-text span {
-    transform-origin: 65px;
+  .circular-text .text-container span {
     font-size: 10px;
-    animation: spinLetter 8s linear infinite;
   }
 }
