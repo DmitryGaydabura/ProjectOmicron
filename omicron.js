@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Генерация комет
   const cometsContainer = document.querySelector('.comets');
-  const cometInterval = 100; // Интервал появления комет в миллисекундах (7 секунд)
+  const cometInterval = 1000; // Интервал появления комет в миллисекундах (7 секунд)
 
   function createComet() {
     const comet = document.createElement('div');
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Случайная анимационная задержка и длительность
     comet.style.animationDelay = `${Math.random() * 3}s`;
-    comet.style.animationDuration = `${Math.random() * 2 }s`; // от 2s
+    comet.style.animationDuration = `${Math.random() * 2 + 2}s`; // от 2s до 4s
 
     // Добавляем комету в контейнер
     cometsContainer.appendChild(comet);
@@ -106,13 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
   directionalLight.position.set(5, 3, 5);
   scene.add(directionalLight);
 
-  // Загрузка текстуры планеты
+  // Загрузка текстур
   const textureLoader = new THREE.TextureLoader();
-  const planetTexture = textureLoader.load('swamp.png'); // Убедитесь, что путь к текстуре правильный
+  const swampTexture = textureLoader.load('assets/textures/Swamp.png'); // Дополнительная текстура
 
   // Создаем геометрию и материал планеты
   const geometry = new THREE.SphereGeometry(1.5, 64, 64);
-  const material = new THREE.MeshStandardMaterial({ map: planetTexture });
+  const material = new THREE.MeshStandardMaterial({
+    map: swampTexture,
+  });
   const planet = new THREE.Mesh(geometry, material);
   scene.add(planet);
 

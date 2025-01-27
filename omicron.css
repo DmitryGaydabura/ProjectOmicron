@@ -9,16 +9,6 @@ body, html {
   background: black;
 }
 
-/* Контейнер для Three.js сцены */
-#three-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 400px; /* Ширина контейнера */
-  height: 400px; /* Высота контейнера */
-  z-index: 5; /* Размещаем поверх остальных элементов */
-}
-
 header {
   text-align: center;
   padding: 60px 20px;
@@ -195,25 +185,14 @@ main {
   background: linear-gradient(45deg, rgba(150, 0, 255, 1), rgba(150, 0, 255, 0));
 }
 
-/* Стили для планеты */
-.planet {
+/* Контейнер для Three.js сцены */
+#three-container {
   position: fixed;
   top: 50px; /* Расположение планеты от верхнего края */
   right: 50px; /* Расположение планеты от правого края */
-  width: 300px; /* Размер планеты */
-  height: 300px;
-  background-image: url('planet-texture.jpg'); /* Фоновое изображение планеты */
-  background-size: cover; /* Масштабирование изображения для покрытия элемента */
-  background-repeat: no-repeat;
-  border-radius: 50%;
-  box-shadow: 0 0 100px rgba(53, 94, 59, 0.7); /* Тень для объёма */
-  z-index: 0; /* Размещаем планету позади звёзд */
-  animation: rotatePlanet 60s linear infinite; /* Вращение планеты */
-}
-
-@keyframes rotatePlanet {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
+  width: 400px; /* Ширина контейнера */
+  height: 400px; /* Высота контейнера */
+  z-index: 5; /* Размещаем поверх остальных элементов */
 }
 
 /* Адаптивность */
@@ -242,8 +221,8 @@ main {
     font-size: 1em;
   }
 
-  /* Уменьшаем размер планеты на мобильных устройствах и перемещаем её */
-  .planet {
+  /* Уменьшаем размер и перемещаем планету на мобильных устройствах */
+  #three-container {
     width: 200px;
     height: 200px;
     top: 20px;
