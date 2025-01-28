@@ -66,15 +66,35 @@ main {
   border-radius: 10px;
   padding: 20px;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   transform-style: preserve-3d;
+  .letter-box {
+    transition:
+        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        box-shadow 1.2s ease-in-out,
+        filter 0.8s ease-out;
+    transform-origin: center;
+    will-change: transform, box-shadow, filter;
+  }
+}
+.letter-box {
+  /* Убраны CSS-переходы */
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 .letter-box:hover {
-  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.7);
+  /* Упрощенные эффекты */
+  transform: scale(1.15);
+  box-shadow: 0 0 35px rgba(173, 216, 230, 0.4);
+}
+
+.letter-link {
+  transition: transform 0.4s ease;
 }
 
 /* Стили для псевдоэлементов толщины (необязательно) */
@@ -255,6 +275,15 @@ main {
   color: #fff;
   text-shadow: 0 0 5px #fff;
   user-select: none;
+}
+
+body {
+  perspective: 1000px;
+}
+
+.letter-box {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
 /* Адаптивность */

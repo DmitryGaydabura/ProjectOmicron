@@ -1,4 +1,5 @@
 // ========= ПАРАМЕТРЫ =========
+
 const NUM_STARS = 1000;        // Количество звёзд
 const COMET_INTERVAL = 4000;   // Интервал между появлениями комет (в мс)
 const MAX_COMETS = 10;         // Максимальное количество одновременно летящих комет
@@ -54,7 +55,6 @@ function animateStars() {
   requestAnimationFrame(animateStars);
 }
 
-
 // ================== ТРИ.ЖС ПЛАНЕТА ===================
 function initPlanet() {
   const container = document.getElementById('three-container');
@@ -73,7 +73,7 @@ function initPlanet() {
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   // Рендерер
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
@@ -133,11 +133,12 @@ function animatePlanet() {
   renderer.render(scene, camera);
 }
 
-
 // ================= КРУГОВАЯ НАДПИСЬ ==================
 function initCircularText() {
   const circularTextElem = document.querySelector('.circular-text');
-  if (!circularTextElem) return;
+  if (!circularTextElem) {
+    return;
+  }
 
   const text = circularTextElem.textContent.trim();
   circularTextElem.textContent = ''; // очищаем
@@ -170,43 +171,166 @@ function initCircularText() {
   });
 }
 
-
-// ================== 3D-ЭФФЕКТ КАРТОЧЕК ======================
+// ========= ОБНОВЛЕННЫЙ КОД ДЛЯ LETTER-BOXES =========
 function initLetterBoxes() {
   const letterBoxes = document.querySelectorAll('.letter-box');
+  const globalMouse = { x: 0, y: 0 };
+  const boxStates = new Map();
+  let animationFrame;
+  const lerpFactor = 0.15;
+  const parallaxIntensity = 0.03;
+  const magnetPower = 0.15;
 
+  // Инициализация состояний
   letterBoxes.forEach(box => {
-    // Наведение на саму карточку
-    box.addEventListener('mousemove', (e) => {
-      const rect = box.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+    boxStates.set(box, {
+      x: 0,
+      y: 0,
+      scale: 1,
+      isHovered: false,
+      targetX: 0,
+      targetY: 0,
+      targetScale: 1
+    });
+  });
 
-      // Координаты относительно центра
-      const halfWidth = rect.width / 2;
-      const halfHeight = rect.height / 2;
-      const rotateY = ((x - halfWidth) / halfWidth) * 10; // 10 градусов
-      const rotateX = -((y - halfHeight) / halfHeight) * 10;
+  // Плавное обновление
+  function smoothUpdate() {
+    let needsUpdate = false;
 
-      box.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.1)`;
+    letterBoxes.forEach(box => {
+      const state = boxStates.get(box);
+
+      if (!state.isHovered) {
+        state.x += (state.targetX - state.x) * lerpFactor;
+        state.y += (state.targetY - state.y) * lerpFactor;
+        state.scale += (state.targetScale - state.scale) * lerpFactor;
+      }
+
+      const transform = `
+        translate(${state.x}px, ${state.y}px)
+        scale(${state.scale})
+      `;
+
+      if (box.style.transform !== transform) {
+        box.style.transform = transform;
+        needsUpdate = true;
+      }
     });
 
-    // Когда мышь уходит с карточки
+    if (needsUpdate) {
+      animationFrame = requestAnimationFrame(smoothUpdate);
+    } else {
+      animationFrame = null;
+    }
+  }
+
+  // Обработчик движения мыши
+  document.addEventListener('mousemove', (e) => {
+    globalMouse.x = e.clientX;
+    globalMouse.y = e.clientY;
+
+    letterBoxes.forEach(box => {
+      const state = boxStates.get(box);
+      if (state.isHovered) return;
+
+      const rect = box.getBoundingClientRect();
+      const boxCenterX = rect.left + rect.width/2;
+      const boxCenterY = rect.top + rect.height/2;
+
+      // Параллакс
+      const parallaxX = (globalMouse.x - window.innerWidth/2) * parallaxIntensity;
+      const parallaxY = (globalMouse.y - window.innerHeight/2) * parallaxIntensity;
+
+      // Магнетизм
+      const deltaX = globalMouse.x - boxCenterX;
+      const deltaY = globalMouse.y - boxCenterY;
+      const distance = Math.sqrt(deltaX**2 + deltaY**2);
+      const maxDistance = 250;
+      const force = Math.max(0, (1 - distance/maxDistance)) * magnetPower;
+
+      state.targetX = parallaxX + deltaX * force;
+      state.targetY = parallaxY + deltaY * force;
+      state.targetScale = 1 + force * 0.3;
+    });
+
+    if (!animationFrame) {
+      animationFrame = requestAnimationFrame(smoothUpdate);
+    }
+  });
+
+  // Обработчики hover
+  letterBoxes.forEach(box => {
+    const state = boxStates.get(box);
+
+    box.addEventListener('mouseenter', () => {
+      state.isHovered = true;
+      state.targetX = 0;
+      state.targetY = 0;
+      state.targetScale = 1.15;
+
+      anime({
+        targets: box,
+        translateZ: [state.z || 0, 20],
+        duration: 600,
+        easing: 'easeOutExpo',
+        update: (anim) => {
+          state.z = anim.animations[0].currentValue;
+        }
+      });
+    });
+
     box.addEventListener('mouseleave', () => {
-      box.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+      state.isHovered = false;
+
+      anime({
+        targets: box,
+        translateZ: 0,
+        duration: 800,
+        easing: 'easeOutElastic',
+        update: (anim) => {
+          state.z = anim.animations[0].currentValue;
+        }
+      });
     });
   });
 }
+// ========= УПРОЩЕННАЯ ПУЛЬСАЦИЯ =========
+function animatePulse() {
+  const boxes = document.querySelectorAll('.letter-box');
 
+  anime({
+    targets: boxes,
+    scale: [
+      { value: 1.05, duration: 1500, easing: 'easeInOutSine' },
+      { value: 1, duration: 2000, easing: 'easeOutElastic(1, .5)' }
+    ],
+    translateY: [
+      { value: -5, duration: 1500, easing: 'easeInOutSine' },
+      { value: 0, duration: 2000, easing: 'easeOutElastic(1, .5)' }
+    ],
+    boxShadow: [
+      { value: '0 0 30px rgba(100,149,237,0.3)', duration: 1500 },
+      { value: '0 8px 40px rgba(0,0,0,0.5)', duration: 2000 }
+    ],
+    delay: anime.stagger(150, { grid: [5, 5], from: 'center' }),
+    easing: 'easeInOutSine',
+    loop: false
+  });
+}
 
 // ================== ГЕНЕРАЦИЯ КОМЕТ ===============================
 function generateComets() {
   const cometsContainer = document.querySelector('.comets');
-  if (!cometsContainer) return;
+  if (!cometsContainer) {
+    return;
+  }
 
   function createComet() {
     // Проверяем, не превышено ли максимальное количество комет
-    if (cometsContainer.children.length >= MAX_COMETS) return;
+    if (cometsContainer.children.length >= MAX_COMETS) {
+      return;
+    }
 
     const comet = document.createElement('div');
     comet.classList.add('comet');
@@ -249,6 +373,38 @@ function generateComets() {
   }
 }
 
+// ================== АНИМАЦИЯ ПОЯВЛЕНИЯ СЕТКИ ================
+function initGridEntrance() {
+  const boxes = document.querySelectorAll('.letter-box');
+
+  anime({
+    targets: boxes,
+    translateY: [100, 0],
+    rotateX: [-90, 0],
+    rotateZ: [15, 0],
+    scale: [0.8, 1],
+    opacity: [0, 1],
+    duration: 1200,
+    delay: anime.stagger(80, { grid: [5, 5], from: 'center' }),
+    easing: 'spring(1, 80, 10, 0)',
+    complete: () => {
+      boxes.forEach(box => {
+        box.style.transform = 'none';
+      });
+      // Запускаем первую пульсацию после завершения входа
+      animatePulse();
+    }
+  });
+}
+
+
+function initPulseAnimation() {
+  // Запускаем первую анимацию сразу
+  animatePulse();
+
+  // Затем запускаем анимацию каждые 12 секунд
+  setInterval(animatePulse, 12000);
+}
 
 // ================== ЗАПУСК ВСЕГО ===============================
 document.addEventListener('DOMContentLoaded', () => {
@@ -267,4 +423,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 5. Кольцо текста (без анимации вращения)
   initCircularText();
+
+  // 6. Пульсация сетки
+  initPulseAnimation();
+
+  // 7. Анимация появления сетки
+  initGridEntrance();
 });
