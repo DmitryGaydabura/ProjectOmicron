@@ -70,31 +70,19 @@ main {
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   transform-style: preserve-3d;
-  .letter-box {
-    transition:
-        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        box-shadow 1.2s ease-in-out,
-        filter 0.8s ease-out;
-    transform-origin: center;
-    will-change: transform, box-shadow, filter;
-  }
-}
-.letter-box {
-  /* Убраны CSS-переходы */
-  will-change: transform, box-shadow;
-  transform: translateZ(0);
+  will-change: transform;
   backface-visibility: hidden;
-  perspective: 1000px;
+  transform: translateZ(0);
+  transition:
+      transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      box-shadow 0.8s ease-in-out,
+      filter 0.8s ease-out;
 }
 
+/* Ховер-эффект: добавим небольшой наклон и свечение */
 .letter-box:hover {
-  /* Упрощенные эффекты */
-  transform: scale(1.15);
-  box-shadow: 0 0 35px rgba(173, 216, 230, 0.4);
-}
-
-.letter-link {
-  transition: transform 0.4s ease;
+  box-shadow: 0 0 15px rgba(173, 216, 230, 0.3);
+  transform: perspective(800px) rotateY(6deg) scale(1.04);
 }
 
 /* Стили для псевдоэлементов толщины (необязательно) */
@@ -131,6 +119,7 @@ main {
   align-items: center;
   justify-content: center;
   height: 100%;
+  transition: transform 0.4s ease;
 }
 
 /* Неактивные ссылки */
@@ -187,21 +176,23 @@ main {
   position: absolute;
   width: 3px;
   height: 3px;
-  background: linear-gradient(45deg, rgba(255,255,255,1), rgba(255,255,255,0));
   border-radius: 50%;
   opacity: 0;
-  transform: rotate(45deg);
+  transform: translate(0, 0) rotate(0deg); /* Изначально без смещения/угла */
   animation: cometMove 1.5s linear forwards;
 }
 
 @keyframes cometMove {
   0% {
+    opacity: 0.1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  10% {
     opacity: 1;
-    transform: translate(0, 0) rotate(45deg);
   }
   100% {
     opacity: 0;
-    transform: translate(100vw, 100vh) rotate(45deg);
+    /* Сместим комету далеко за экран — координаты задаются при создании через style-атрибут */
   }
 }
 
@@ -243,16 +234,14 @@ main {
   overflow: visible;
 }
 
-/* Контейнер для букв (без анимации) */
+/* Контейнер для букв (анимация вращения против часовой стрелки) */
 .circular-text .text-container {
   position: relative;
   width: 100%;
   height: 100%;
-  /* Добавляем анимацию вращения против часовой стрелки */
   animation: spin 20s linear infinite;
 }
 
-/* Анимация вращения против часовой стрелки */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -269,21 +258,11 @@ main {
   left: 50%;
   top: 50%;
   transform-origin: 0 0; /* вращение от верхнего левого угла спана */
-
   font-weight: 900; /* Дважды жирнее */
   font-size: 24px;
   color: #fff;
   text-shadow: 0 0 5px #fff;
   user-select: none;
-}
-
-body {
-  perspective: 1000px;
-}
-
-.letter-box {
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
 }
 
 /* Адаптивность */
