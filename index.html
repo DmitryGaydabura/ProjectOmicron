@@ -22,90 +22,64 @@
   </div>
 </div>
 
-<!-- Основная секция с карточками -->
-<section class="resume-section">
-  <div class="resume-content">
-    <!-- Первая (центральная) карточка -->
-    <div class="resume-card main-card">
-      <div class="hologram-effect"></div>
-      <h1 class="gradient-text">DMITRY<br>GAYDABURA</h1>
-      <p class="position neon-text">Backend Architect</p>
-      <div class="contacts">
-        <a href="mailto:gaydabura.d@icloud.com" class="contact-link">
-          <svg class="contact-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
-          gaydabura.d@icloud.com
-        </a>
-        <a href="tel:+380980411280" class="contact-link">
-          <svg class="contact-icon" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-          +38 (098) 041-12-80
-        </a>
-      </div>
-    </div>
-
-    <!-- Карточка Professional Profile -->
-    <div class="resume-card">
-      <div class="card-decor"></div>
-      <h3 class="neon-heading">Professional Profile</h3>
-      <p class="animated-underline">
-        Seasoned backend architect with 3+ years crafting high-performance systems.
-        Expertise in distributed systems and cloud-native solutions.
-      </p>
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-value">15+</div>
-          <div class="stat-label">Projects Delivered</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value">99.9%</div>
-          <div class="stat-label">Uptime</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Карточка Career Journey -->
-    <div class="resume-card experience-card">
-      <h3 class="neon-heading">Career Journey</h3>
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <div class="timeline-year">2024-Present</div>
-            <h4 class="timeline-company">Andersen Lab</h4>
-            <p class="timeline-position">Lead System Architect</p>
-          </div>
-        </div>
-        <!-- Дополнительные timeline-items при необходимости -->
-      </div>
-    </div>
-
-    <!-- Карточка Core Stack -->
-    <div class="resume-card skills-card">
-      <h3 class="neon-heading">Core Stack</h3>
-      <div class="skills-grid">
-        <div class="skill-item">
-          <div class="skill-progress" style="--progress: 95%;"></div>
-          <span class="skill-name">Java</span>
-        </div>
-        <!-- Другие навыки -->
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Звёздное небо -->
+<!-- Звёздный фон -->
 <canvas id="starfield"></canvas>
-
-<!-- Планета и круговой текст -->
-<div id="three-container">
-  <div class="circular-text">
-    DeveLoped by Gaydabura Dmitry *
-  </div>
-</div>
 
 <!-- Кометы -->
 <div class="comets"></div>
 
-<!-- Подключение основного скрипта -->
+<!-- 3D-сцена -->
+<div class="scene">
+  <!-- Полупрозрачная белая рамка (контейнер для панелей) -->
+  <div class="frame">
+
+    <!-- ПАНЕЛЬ №1: Главная -->
+    <section class="panel panel-main">
+      <!-- Анимированная планета (справа/слева - как угодно) -->
+      <div id="three-container">
+        <div class="circular-text">
+          DeveLoped by Gaydabura Dmitry *
+        </div>
+      </div>
+
+      <!-- Имя и должность (ТЕПЕРЬ СЛЕВА ВНИЗУ) -->
+      <div class="hero-name">
+        <h1>DMITRY GAYDABURA</h1>
+        <p>Backend Architect</p>
+      </div>
+
+      <!-- Вкладки (пусть будут справа вверху) -->
+      <nav class="tabs">
+        <button data-panel="projects">Проекты</button>
+        <button data-panel="tech">Технологии</button>
+        <button data-panel="about">Кто я</button>
+      </nav>
+    </section>
+
+    <!-- ПАНЕЛЬ №2: Проекты -->
+    <section class="panel panel-projects">
+      <h2>Мои проекты</h2>
+      <p>Список / описание проектов, ссылки и т.д.</p>
+      <button class="back-btn" data-panel="main">На главную</button>
+    </section>
+
+    <!-- ПАНЕЛЬ №3: Технологии -->
+    <section class="panel panel-tech">
+      <h2>Технологии</h2>
+      <p>Ваш стек, фреймворки, инструменты и т.д.</p>
+      <button class="back-btn" data-panel="main">На главную</button>
+    </section>
+
+    <!-- ПАНЕЛЬ №4: Кто я -->
+    <section class="panel panel-about">
+      <h2>Кто я</h2>
+      <p>Немного о себе, опыт, пути развития и прочее.</p>
+      <button class="back-btn" data-panel="main">На главную</button>
+    </section>
+
+  </div><!-- .frame -->
+</div><!-- .scene -->
+
 <script src="omicron.js" defer></script>
 </body>
 </html>

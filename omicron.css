@@ -6,6 +6,7 @@
   --cyber-green: #00ff9d;
 }
 
+/* Сброс */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -16,16 +17,14 @@ body {
   font-family: 'Inter', sans-serif;
   background: var(--space-black);
   color: rgba(255,255,255,0.9);
-  overflow-x: hidden;
+  overflow: hidden; /* скрываем прокрутку, если не нужна */
 }
 
-/* ============ PRELOADER ============ */
+/* ====== ПРЕЛОАДЕР ====== */
 .preloader {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: var(--space-black);
   z-index: 1000;
   display: flex;
@@ -33,7 +32,6 @@ body {
   align-items: center;
   transition: opacity 1s ease;
 }
-
 .preloader-inner {
   position: relative;
   overflow: hidden;
@@ -41,14 +39,11 @@ body {
   border-radius: 15px;
   text-align: center;
 }
-
 .preloader-inner::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
   background: linear-gradient(
       45deg,
       transparent 25%,
@@ -57,10 +52,8 @@ body {
   );
   animation: hologram-line 2s linear infinite;
 }
-
 .loading-spinner {
-  width: 50px;
-  height: 50px;
+  width: 50px; height: 50px;
   border: 4px solid rgba(255,255,255,0.1);
   border-top-color: var(--neon-purple);
   border-radius: 50%;
@@ -70,7 +63,6 @@ body {
   z-index: 2;
   filter: drop-shadow(0 0 8px var(--neon-purple));
 }
-
 .loading-text {
   position: relative;
   z-index: 2;
@@ -81,178 +73,140 @@ body {
   animation: textGlow 2s ease-in-out infinite;
 }
 
-/* ============ SECTION/CONTENT ============ */
-.resume-section {
+/* ====== СЦЕНА ДЛЯ 3D-ПЕРЕХОДОВ ====== */
+.scene {
+  width: 100vw;
+  height: 100vh;
   position: relative;
-  min-height: 100vh;
-  padding: 4rem 2rem;
-  z-index: 20;
+  perspective: 1200px; /* «глубина» сцены */
+  z-index: 10; /* выше звёздного холста */
+}
+
+/* Белая полупрозрачная рамка (80% высоты/ширины) */
+.frame {
+  width: 80vw;
+  height: 80vh;
+  border: 1px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.04); /* почти прозрачный белый фон */
+  margin: 10vh auto; /* центрируем */
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1s ease; /* плавный переход */
+  overflow: hidden; /* чтобы контент панелей не вылезал за границы */
+}
+
+/* ====== ПАНЕЛИ ====== */
+.panel {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.resume-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2.5rem;
-  perspective: 1000px;
-}
-
-/* ============ CARD STYLES ============ */
-.resume-card {
-  background: linear-gradient(145deg, rgba(26,26,47,0.9), rgba(10,10,22,0.9));
-  border: 1px solid rgba(0, 243, 255, 0.15);
-  border-radius: 20px;
-  padding: 2.5rem;
-  position: relative;
-  backdrop-filter: blur(12px);
-  transform-style: preserve-3d;
-  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
-  box-shadow 0.4s ease;
-  overflow: hidden;
-}
-
-.resume-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-      45deg,
-      transparent 0%,
-      rgba(0, 243, 255, 0.05) 50%,
-      transparent 100%
-  );
+  /* Немного полупрозрачного фона, чтобы виден был фон позади */
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(5px);
+  /* Каждая панель на своем месте в «кубе» (см. ниже) */
+  /* Сначала все скрыты */
+  opacity: 0;
   pointer-events: none;
 }
 
-.main-card {
-  grid-column: 1 / -1;
-  text-align: center;
-  background: linear-gradient(
-      135deg,
-      rgba(26,26,47,0.95) 0%,
-      rgba(10,10,22,0.95) 100%
-  );
+/**
+ * Для эффекта «куба»:
+ * - .panel-main смотрит «вперёд»
+ * - .panel-projects смещена на правую грань (rotateY(-90deg))
+ * - .panel-tech на заднюю грань (rotateY(180deg))
+ * - .panel-about на левую грань (rotateY(90deg))
+ * - А translateZ(...) чуть выносим «наружу», чтобы камера видела их
+ */
+.panel-main {
+  transform: rotateY(0deg) translateZ(350px);
+}
+.panel-projects {
+  transform: rotateY(-90deg) translateZ(350px);
+}
+.panel-tech {
+  transform: rotateY(180deg) translateZ(350px);
+}
+.panel-about {
+  transform: rotateY(90deg) translateZ(350px);
 }
 
-.hologram-effect {
+/* Когда панель активна, она кликабельна и видна */
+.panel.active {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.5s ease;
+}
+
+/* ====== Навигация (вкладки) ====== */
+.tabs {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(
-      circle,
-      rgba(0,243,255,0.15) 0%,
-      rgba(0,243,255,0) 70%
-  );
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  animation: hologramPulse 8s linear infinite;
+  top: 20px; right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
-
-.gradient-text {
-  background: linear-gradient(135deg, #00f3ff 0%, #bc13fe 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.tabs button {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 0.5rem 1rem;
   font-family: 'Space Mono', monospace;
-  font-size: 3.5rem;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  text-shadow: 0 0 15px rgba(188,19,254,0.3);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.tabs button:hover {
+  background: rgba(255,255,255,0.1);
 }
 
-.neon-text {
-  color: var(--neon-blue);
-  font-family: 'Space Mono', monospace;
-  letter-spacing: 2px;
-  position: relative;
-  display: inline-block;
-}
-
-.neon-text::after {
-  content: '';
+/* Кнопка Назад */
+.back-btn {
   position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: currentColor;
-  filter: drop-shadow(0 0 5px currentColor);
+  top: 20px; right: 20px;
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-family: 'Space Mono', monospace;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.back-btn:hover {
+  background: rgba(255,255,255,0.1);
 }
 
-@media (max-width: 768px) {
-  .resume-content {
-    grid-template-columns: 1fr;
-  }
-
-  .gradient-text {
-    font-size: 2.5rem;
-  }
-
-  .contact-link {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* ============ CONTACT LINKS ============ */
-.contact-link {
-  display: inline-flex;
-  align-items: center;
-  color: rgba(255,255,255,0.85);
-  text-decoration: none;
-  margin: 0.5rem 0;
-  padding: 0.8rem 1.5rem;
-  border-radius: 30px;
-  background: rgba(255,255,255,0.05);
-  transition: all 0.3s ease;
-}
-
-.contact-link:hover {
-  background: rgba(0, 243, 255, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.2);
-}
-
-.contact-icon {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
-  margin-right: 10px;
-}
-
-/* ============ ЗВЁЗДНОЕ НЕБО И ПЛАНЕТА ============ */
-#starfield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 0;
-}
-
-#three-container {
-  position: fixed;
+/* ====== Имя слева внизу ====== */
+.hero-name {
+  position: absolute;
+  left: 20px;
   bottom: 20px;
-  right: 20px;
+  text-align: left;
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+}
+.hero-name h1 {
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
+}
+.hero-name p {
+  font-size: 1rem;
+}
+
+/* ====== ПЛАНЕТА ====== */
+#three-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
   width: 200px;
   height: 200px;
-  z-index: 1000;
-  pointer-events: none;
+  pointer-events: none; /* чтобы клики шли сквозь */
 }
-
 .circular-text {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; width: 100%; height: 100%;
   font-family: 'Space Mono', monospace;
   color: rgba(255,255,255,0.7);
   overflow: hidden;
@@ -260,59 +214,57 @@ body {
   user-select: none;
   text-align: center;
 }
-
 .circular-text .text-container {
   width: 100%;
   height: 100%;
   position: relative;
 }
-
 .circular-text .text-container span {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 50%; top: 50%;
   transform-origin: 0 0;
   font-size: 14px;
   letter-spacing: 1px;
   white-space: pre;
 }
+.circular-text .rotate-container {
+  animation: rotateText 10s linear infinite;
+  transform-style: preserve-3d;
+}
 
-/* ============ КОМЕТЫ ============ */
+/* ====== ЗВЁЗДНОЕ НЕБО И КОМЕТЫ ====== */
+#starfield {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 0;
+}
 .comets {
   pointer-events: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   z-index: 5;
 }
-
 .comet {
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 6px; height: 6px;
   background: white;
   border-radius: 50%;
   box-shadow: 0 0 20px white, 0 0 40px white;
   animation: fly 2s linear forwards;
 }
-
 .comet.blue {
   background: #00f3ff;
   box-shadow: 0 0 20px #00f3ff, 0 0 40px #00f3ff;
 }
-
 .comet.purple {
   background: #bc13fe;
   box-shadow: 0 0 20px #bc13fe, 0 0 40px #bc13fe;
 }
-
 .comet.white {
   background: #ffffff;
   box-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff;
 }
-
 @keyframes fly {
   100% {
     transform: translateX(-100vw) translateY(100vh);
@@ -320,51 +272,34 @@ body {
   }
 }
 
-/* ============ KEYFRAMES ============ */
+/* ====== KEYFRAMES / ANIMATIONS ====== */
 @keyframes hologramPulse {
-  0% {
-    opacity: 0.3;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-  50% {
-    opacity: 0.1;
-    transform: translate(-50%, -50%) scale(1.2);
-  }
-  100% {
-    opacity: 0.3;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
+  0%   { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+  50%  { opacity: 0.1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
 }
-
 @keyframes textGlow {
-  0%, 100% {
-    opacity: 0.8;
-    text-shadow: 0 0 10px var(--neon-blue);
-  }
-  50% {
-    opacity: 1;
-    text-shadow: 0 0 20px var(--neon-blue);
-  }
+  0%,100% { opacity: 0.8; text-shadow: 0 0 10px var(--neon-blue); }
+  50%     { opacity: 1;   text-shadow: 0 0 20px var(--neon-blue); }
 }
-
 @keyframes spin {
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  to   { transform: rotate(360deg); }
 }
-
 @keyframes hologram-line {
   0%   { transform: translateX(-100%) rotate(45deg); }
-  100% { transform: translateX(200%) rotate(45deg); }
+  100% { transform: translateX(200%)  rotate(45deg); }
 }
-
-.circular-text .rotate-container {
-  animation: rotateText 10s linear infinite;
-  transform-style: preserve-3d;
-}
-
 @keyframes rotateText {
   0%   { transform: rotate(0deg); }
-  100% { transform: rotate(-360deg); } /* против часовой стрелки */
+  100% { transform: rotate(-360deg); } /* против часовой */
 }
-
-
+.hologram-effect {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 150%; height: 150%;
+  background: radial-gradient(circle, rgba(0,243,255,0.15) 0%, rgba(0,243,255,0) 70%);
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  animation: hologramPulse 8s linear infinite;
+}
