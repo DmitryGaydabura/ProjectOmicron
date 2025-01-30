@@ -1,377 +1,91 @@
-/* Сброс отступов и размеров */
+:root {
+  --neon-blue: #00f3ff;
+  --neon-purple: #bc13fe;
+  --space-black: #0a0a16;
+  --starry-blue: #1a1a2f;
+  --cyber-green: #00ff9d;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-.resume-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--space-black);
+  color: rgba(255,255,255,0.9);
+  overflow-x: hidden;
 }
 
-.resume-card {
-  background: rgba(10, 10, 10, 0.9);
-  border: 1px solid rgba(173, 216, 230, 0.3);
-  border-radius: 15px;
-  padding: 2rem;
-  backdrop-filter: blur(10px);
-  transform-style: preserve-3d;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+/* ============ PRELOADER ============ */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--space-black);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 1s ease;
+}
+
+.preloader-inner {
   position: relative;
   overflow: hidden;
-
-}
-
-.resume-card::before,
-.resume-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  padding: 2rem;
   border-radius: 15px;
-  pointer-events: none;
-}
-
-.resume-card::before {
-  background: rgba(173, 216, 230, 0.1);
-  border: 1px solid rgba(173, 216, 230, 0.2);
-  transform: translateZ(-10px);
-}
-
-.resume-card::after {
-  background: rgba(0, 0, 139, 0.1);
-  border: 1px solid rgba(173, 216, 230, 0.2);
-  transform: translateZ(-20px) rotateY(180deg);
-}
-
-.resume-card:hover {
-  transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 10px 20px rgba(173, 216, 230, 0.5);
-}
-
-.main-card {
-  grid-column: 1 / -1;
   text-align: center;
-  background: rgba(25, 25, 112, 0.2);
 }
 
-/* Общие стили для body */
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden; /* Без прокрутки */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #0d0d0d; /* Тёмный фон */
-  color: #ffffff;
-}
-
-/* Шапка */
-header {
-  text-align: center;
-  padding: 60px 20px;
-  /* Градиентно-прозрачный фон сверху */
-  background: linear-gradient(to bottom, rgba(25, 25, 112, 0.8), rgba(25, 25, 112, 0));
-  position: relative;
-  z-index: 10; /* Над canvas */
-}
-
-/* Заголовок */
-header h1 {
-  font-size: 4em;
-  margin: 0;
-  color: #add8e6; /* Светло-голубой цвет */
-  text-shadow: 0 0 15px #add8e6, 0 0 30px #add8e6;
-}
-
-/* Подзаголовок */
-header p {
-  font-size: 1.5em;
-  margin-top: 10px;
-  color: #b0e0e6; /* Светло-голубой оттенок */
-}
-
-/* Основной контейнер */
-main {
-  position: relative;
-  z-index: 10; /* Выше canvas */
-  padding: 20px;
-}
-
-/* Сетка с буквами */
-.letter-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-  /* Убираем 3D-перспективу, чтобы ничего не «ломало» */
-  /* perspective: 1500px; */
-}
-
-/* Каждая карточка */
-.letter-box {
-  position: relative;
-  background: rgba(10, 10, 10, 0.67); /* Полупрозрачный тёмный фон */
-  border: 1px solid rgba(173, 216, 230, 0.3); /* Светло-голубая рамка */
-  border-radius: 10px;
-  padding: 20px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-  transform-style: preserve-3d;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  transition:
-      transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      box-shadow 0.8s ease-in-out,
-      filter 0.8s ease-out;
-}
-
-/* Ховер-эффект: добавим небольшой наклон и свечение */
-.letter-box:hover {
-  box-shadow: 0 0 15px rgba(173, 216, 230, 0.3);
-  transform: perspective(800px) rotateY(6deg) scale(1.04);
-}
-
-/* Стили для псевдоэлементов толщины (необязательно) */
-.letter-box::before,
-.letter-box::after {
+.preloader-inner::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  pointer-events: none;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+      45deg,
+      transparent 25%,
+      rgba(0, 243, 255, 0.1) 50%,
+      transparent 75%
+  );
+  animation: hologram-line 2s linear infinite;
 }
 
-.letter-box::before {
-  background: rgba(173, 216, 230, 0.1); /* Светло-голубой */
-  border: 1px solid rgba(173, 216, 230, 0.2);
-  transform: translateZ(-10px);
-}
-
-.letter-box::after {
-  background: rgba(0, 0, 139, 0.1); /* Темно-синий */
-  border: 1px solid rgba(173, 216, 230, 0.2);
-  transform: translateZ(-20px) rotateY(180deg);
-}
-
-/* Стили ссылок */
-.letter-link {
-  text-decoration: none;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  transition: transform 0.4s ease;
-}
-
-/* Неактивные ссылки */
-.letter-link.inactive {
-  pointer-events: none;
-  cursor: default;
-  opacity: 0.6;
-}
-
-/* Активная ссылка */
-.letter-link.active {
-  cursor: pointer;
-}
-
-/* Греческая буква */
-.greek-letter {
-  font-size: 3em;
-  font-weight: bold;
-  color: #ffffff; /* Белый цвет для лучшей видимости */
-  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
-  margin-bottom: 10px;
-}
-
-/* Подпись к букве */
-.letter-name {
-  font-size: 1.2em;
-  color: #ffffff; /* Белый цвет */
-}
-
-/* Canvas на заднем плане */
-#starfield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1; /* под всем контентом */
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Контейнер для комет */
-.comets {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 5; /* Над canvas и контентом */
-}
-
-/* Стиль одной кометы */
-.comet {
-  position: absolute;
-  width: 3px;
-  height: 3px;
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top-color: var(--neon-purple);
   border-radius: 50%;
-  opacity: 0;
-  transform: translate(0, 0) rotate(0deg); /* Изначально без смещения/угла */
-  animation: cometMove 1.5s linear forwards;
-}
-
-@keyframes cometMove {
-  0% {
-    opacity: 0.1;
-    transform: translate(0, 0) rotate(0deg);
-  }
-  10% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    /* Сместим комету далеко за экран — координаты задаются при создании через style-атрибут */
-  }
-}
-
-/* Цвета комет */
-.comet.blue {
-  background: linear-gradient(45deg, rgba(0, 191, 255, 1), rgba(0, 191, 255, 0));
-}
-.comet.purple {
-  background: linear-gradient(45deg, rgba(138, 43, 226, 1), rgba(138, 43, 226, 0));
-}
-.comet.white {
-  background: linear-gradient(45deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-}
-
-/* Контейнер для планеты и надписи */
-#three-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 200px;   /* Размер контейнера */
-  height: 200px;
-  z-index: 15;
-  background: transparent;
-  overflow: visible;
-}
-
-/* Круговая надпись */
-.circular-text {
-  position: absolute;
-  /* Центрируем надпись относительно контейнера */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  width: 160px;
-  height: 160px;
-
-  pointer-events: none; /* Чтобы мышь "прозрачна" для планеты */
-  overflow: visible;
-}
-
-/* Контейнер для букв (анимация вращения против часовой стрелки) */
-.circular-text .text-container {
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
   position: relative;
-  width: 100%;
-  height: 100%;
-  animation: spin 20s linear infinite;
+  z-index: 2;
+  filter: drop-shadow(0 0 8px var(--neon-purple));
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
-  }
+.loading-text {
+  position: relative;
+  z-index: 2;
+  color: var(--neon-blue);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 2px;
+  font-size: 1.2rem;
+  animation: textGlow 2s ease-in-out infinite;
 }
 
-/* Каждая буква, расположенная по кольцу */
-.circular-text .text-container span {
-  position: absolute;
-  /* Центр кольца — это центр #three-container */
-  left: 50%;
-  top: 50%;
-  transform-origin: 0 0; /* вращение от верхнего левого угла спана */
-  font-weight: 900; /* Дважды жирнее */
-  font-size: 24px;
-  color: #fff;
-  text-shadow: 0 0 5px #fff;
-  user-select: none;
-}
-
-/* Адаптивность */
-@media (max-width: 600px) {
-  .letter-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-
-  .letter-box {
-    padding: 15px;
-  }
-
-  .greek-letter {
-    font-size: 2.5em;
-  }
-
-  .letter-name {
-    font-size: 1em;
-  }
-
-  header h1 {
-    font-size: 2.5em;
-  }
-
-  header p {
-    font-size: 1em;
-  }
-
-  /* Уменьшаем размеры планеты на мобильных */
-  #three-container {
-    width: 150px;
-    height: 150px;
-    bottom: 10px;
-    right: 10px;
-  }
-
-  .circular-text {
-    width: 130px;
-    height: 130px;
-    transform: translate(-50%, -50%);
-  }
-
-  .circular-text .text-container span {
-    font-size: 10px;
-  }
-}
-
-/* Стили для секции резюме */
+/* ============ SECTION/CONTENT ============ */
 .resume-section {
   position: relative;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 4rem 2rem;
   z-index: 20;
   display: flex;
   align-items: center;
@@ -379,114 +93,278 @@ main {
 }
 
 .resume-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  opacity: 0;
-  transform: translateY(50px);
-  animation: resumeEntrance 1s ease-out forwards;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  perspective: 1000px;
 }
 
-@keyframes resumeEntrance {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* ============ CARD STYLES ============ */
 .resume-card {
-  background: rgba(10, 10, 10, 0.9);
-  border: 1px solid rgba(173, 216, 230, 0.3);
-  border-radius: 15px;
-  padding: 2rem;
-  backdrop-filter: blur(10px);
-  transition: transform 0.3s ease;
-}
-
-.resume-card:hover {
-  transform: translateY(-5px);
-}
-
-.position {
-  color: #7ec0ee;
-  font-size: 1.4rem;
-  margin: 1rem 0;
-}
-
-.timeline-item {
-  margin: 1.5rem 0;
-  padding-left: 1.5rem;
-  border-left: 2px solid #7ec0ee;
-}
-
-.skills-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-}
-
-.skill {
-  background: rgba(126, 192, 238, 0.2);
-  padding: 0.5rem 1rem;
+  background: linear-gradient(145deg, rgba(26,26,47,0.9), rgba(10,10,22,0.9));
+  border: 1px solid rgba(0, 243, 255, 0.15);
   border-radius: 20px;
-  font-size: 0.9rem;
+  padding: 2.5rem;
+  position: relative;
+  backdrop-filter: blur(12px);
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+  box-shadow 0.4s ease;
+  overflow: hidden;
 }
 
-.cta-button {
+.resume-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      45deg,
+      transparent 0%,
+      rgba(0, 243, 255, 0.05) 50%,
+      transparent 100%
+  );
+  pointer-events: none;
+}
+
+.main-card {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 1.5rem;
-  font-size: 1.2rem;
-  background: linear-gradient(45deg, #7ec0ee, #4a90e2);
-  border-radius: 50px;
-  transition: transform 0.3s ease;
+  background: linear-gradient(
+      135deg,
+      rgba(26,26,47,0.95) 0%,
+      rgba(10,10,22,0.95) 100%
+  );
 }
 
-.cta-button:hover {
-  transform: scale(1.05);
+.hologram-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(
+      circle,
+      rgba(0,243,255,0.15) 0%,
+      rgba(0,243,255,0) 70%
+  );
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  animation: hologramPulse 8s linear infinite;
 }
 
-.arrow {
+.gradient-text {
+  background: linear-gradient(135deg, #00f3ff 0%, #bc13fe 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: 'Space Mono', monospace;
+  font-size: 3.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 15px rgba(188,19,254,0.3);
+}
+
+.neon-text {
+  color: var(--neon-blue);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 2px;
+  position: relative;
   display: inline-block;
-  margin-left: 1rem;
-  animation: bounce 2s infinite;
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
+.neon-text::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+@media (max-width: 768px) {
+  .resume-content {
+    grid-template-columns: 1fr;
   }
-  40% {
-    transform: translateY(-10px);
+
+  .gradient-text {
+    font-size: 2.5rem;
   }
-  60% {
-    transform: translateY(-5px);
+
+  .contact-link {
+    width: 100%;
+    justify-content: center;
   }
 }
 
+/* ============ CONTACT LINKS ============ */
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  margin: 0.5rem 0;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
+}
 
-@keyframes textFadeIn {
-  from {
+.contact-link:hover {
+  background: rgba(0, 243, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.2);
+}
+
+.contact-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  margin-right: 10px;
+}
+
+/* ============ ЗВЁЗДНОЕ НЕБО И ПЛАНЕТА ============ */
+#starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+#three-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 200px;
+  height: 200px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.circular-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Space Mono', monospace;
+  color: rgba(255,255,255,0.7);
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  text-align: center;
+}
+
+.circular-text .text-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.circular-text .text-container span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: 0 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+  white-space: pre;
+}
+
+/* ============ КОМЕТЫ ============ */
+.comets {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+}
+
+.comet {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 20px white, 0 0 40px white;
+  animation: fly 2s linear forwards;
+}
+
+.comet.blue {
+  background: #00f3ff;
+  box-shadow: 0 0 20px #00f3ff, 0 0 40px #00f3ff;
+}
+
+.comet.purple {
+  background: #bc13fe;
+  box-shadow: 0 0 20px #bc13fe, 0 0 40px #bc13fe;
+}
+
+.comet.white {
+  background: #ffffff;
+  box-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff;
+}
+
+@keyframes fly {
+  100% {
+    transform: translateX(-100vw) translateY(100vh);
     opacity: 0;
-    transform: translateY(20px);
   }
-  to {
+}
+
+/* ============ KEYFRAMES ============ */
+@keyframes hologramPulse {
+  0% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  50% {
+    opacity: 0.1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+
+@keyframes textGlow {
+  0%, 100% {
+    opacity: 0.8;
+    text-shadow: 0 0 10px var(--neon-blue);
+  }
+  50% {
     opacity: 1;
-    transform: translateY(0);
+    text-shadow: 0 0 20px var(--neon-blue);
   }
 }
 
-.resume-card h2, .resume-card h3, .resume-card p {
-  animation: textFadeIn 1s ease-out;
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.cta-button {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+@keyframes hologram-line {
+  0%   { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(200%) rotate(45deg); }
 }
 
-.cta-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 10px 20px rgba(126, 192, 238, 0.5);
+.circular-text .rotate-container {
+  animation: rotateText 10s linear infinite;
+  transform-style: preserve-3d;
 }
+
+@keyframes rotateText {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); } /* против часовой стрелки */
+}
+
+

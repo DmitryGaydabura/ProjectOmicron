@@ -3,88 +3,109 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Omicron Project</title>
+  <title>Dmitry Gaydabura | Backend Developer</title>
+  <!-- Шрифты -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;500;700&display=swap">
+  <!-- Стили -->
   <link rel="stylesheet" href="omicron.css"/>
+  <!-- THREE.js и anime.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" defer></script>
 </head>
 <body>
 
+<!-- Прелоадер -->
+<div class="preloader">
+  <div class="preloader-inner">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">INITIALIZING PORTFOLIO...</div>
+  </div>
+</div>
+
+<!-- Основная секция с карточками -->
 <section class="resume-section">
   <div class="resume-content">
-    <!-- Блок с основной информацией -->
+    <!-- Первая (центральная) карточка -->
     <div class="resume-card main-card">
-      <h2>Dmitry Gaydabura</h2>
-      <p class="position">Back-end Web Developer</p>
+      <div class="hologram-effect"></div>
+      <h1 class="gradient-text">DMITRY<br>GAYDABURA</h1>
+      <p class="position neon-text">Backend Architect</p>
       <div class="contacts">
-        <p>gaydabura.d@icloud.com</p>
-        <p>+38(098)041-12-80</p>
+        <a href="mailto:gaydabura.d@icloud.com" class="contact-link">
+          <svg class="contact-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>
+          gaydabura.d@icloud.com
+        </a>
+        <a href="tel:+380980411280" class="contact-link">
+          <svg class="contact-icon" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          +38 (098) 041-12-80
+        </a>
       </div>
     </div>
 
-    <!-- Блок "О себе" -->
+    <!-- Карточка Professional Profile -->
     <div class="resume-card">
-      <h3>Who am I?</h3>
-      <p>
-        3+ years of experience in web development. <br>
-        Specialization: building RESTful services with Java/Python. <br><br>
-        Skilled in frameworks such as Spring Boot, Django, and Flask. <br>
-        Experienced in working with relational (MySQL, PostgreSQL) and NoSQL (MongoDB) databases. <br>
-        Comfortable with cloud platforms (AWS, Azure) and containerization (Docker, Kubernetes). <br>
-        Familiar with CI/CD pipelines (Jenkins, GitLab CI) and agile methodologies. <br>
-        Passionate about learning new technologies, optimizing performance, and delivering robust, scalable solutions.
+      <div class="card-decor"></div>
+      <h3 class="neon-heading">Professional Profile</h3>
+      <p class="animated-underline">
+        Seasoned backend architect with 3+ years crafting high-performance systems.
+        Expertise in distributed systems and cloud-native solutions.
       </p>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">15+</div>
+          <div class="stat-label">Projects Delivered</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">99.9%</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Опыт работы -->
-    <div class="resume-card">
-      <h3>Experience</h3>
+    <!-- Карточка Career Journey -->
+    <div class="resume-card experience-card">
+      <h3 class="neon-heading">Career Journey</h3>
       <div class="timeline">
         <div class="timeline-item">
-          <h4>Andersen (2024-н.в.)</h4>
-          <p>Middle Java Developer</p>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-year">2024-Present</div>
+            <h4 class="timeline-company">Andersen Lab</h4>
+            <p class="timeline-position">Lead System Architect</p>
+          </div>
         </div>
-        <div class="timeline-item">
-          <h4>Mastercard & SymbolTransport LLC (2022-2024)</h4>
-          <p>Junior Java Developer</p>
-        </div>
-        <div class="timeline-item">
-          <h4>Vareger (2021-2022)</h4>
-          <p>Junior Java Developer</p>
-        </div>
-        <div class="timeline-item">
-          <h4>ProfIT Soft (2021)</h4>
-          <p>Trainee Java Developer</p>
-        </div>
+        <!-- Дополнительные timeline-items при необходимости -->
       </div>
     </div>
 
-    <!-- Навыки -->
-    <div class="resume-card skills">
-      <h3>Tech Stack</h3>
+    <!-- Карточка Core Stack -->
+    <div class="resume-card skills-card">
+      <h3 class="neon-heading">Core Stack</h3>
       <div class="skills-grid">
-        <span class="skill">Java</span>
-        <span class="skill">Spring Boot</span>
-        <span class="skill">Python</span>
-        <span class="skill">JS</span>
-        <span class="skill">TS</span>
-        <span class="skill">PostgreSQL</span>
-        <span class="skill">Data Science</span>
-        <span class="skill">AWS</span>
+        <div class="skill-item">
+          <div class="skill-progress" style="--progress: 95%;"></div>
+          <span class="skill-name">Java</span>
+        </div>
+        <!-- Другие навыки -->
       </div>
     </div>
   </div>
 </section>
 
-
+<!-- Звёздное небо -->
 <canvas id="starfield"></canvas>
+
+<!-- Планета и круговой текст -->
 <div id="three-container">
   <div class="circular-text">
     DeveLoped by Gaydabura Dmitry *
   </div>
 </div>
+
+<!-- Кометы -->
 <div class="comets"></div>
 
+<!-- Подключение основного скрипта -->
 <script src="omicron.js" defer></script>
 </body>
 </html>
