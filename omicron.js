@@ -5,7 +5,7 @@
 let scene, camera, renderer;
 let planet, atmosphere;
 
-// «Взрыв» звёзд
+// Коэффициент «взрыва» звёзд, сперва 5 — затем анимированно к 1
 let starExplosionFactor = 5;
 
 function initCanvas() {
@@ -52,14 +52,13 @@ function initCanvas() {
   function animate() {
     ctx.fillStyle = 'rgba(10,10,22,0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     stars.forEach(star => {
       star.update();
       star.draw();
     });
-
     requestAnimationFrame(animate);
   }
+
   window.addEventListener('resize', resize);
   resize();
   animate();
@@ -88,6 +87,7 @@ function initPlanet() {
   directionalLight.position.set(5, 3, 5);
   scene.add(directionalLight);
 
+  // Замените путь к текстуре при необходимости
   const textureLoader = new THREE.TextureLoader();
   const planetTexture = textureLoader.load('assets/textures/Swamp.png');
 
@@ -111,7 +111,6 @@ function initPlanet() {
   scene.add(atmosphere);
 
   window.addEventListener('resize', onWindowResize, false);
-
   animatePlanet();
 }
 function onWindowResize() {
@@ -135,13 +134,11 @@ function initCircularText() {
   circularTextElem.textContent = '';
 
   const container = document.createElement('div');
-  container.classList.add('text-container');
-  container.classList.add('rotate-container');
+  container.classList.add('text-container', 'rotate-container');
   circularTextElem.appendChild(container);
 
   const letters = text.split('');
-  const total = letters.length;
-  const angleStep = 360 / total;
+  const angleStep = 360 / letters.length;
   const radius = 100;
 
   letters.forEach((letter, i) => {
@@ -165,30 +162,24 @@ function generateComets() {
   const COMET_INTERVAL = 1000;
 
   function createComet() {
-    if (cometsContainer.children.length >= MAX_COMETS) {
-      return;
-    }
+    if (cometsContainer.children.length >= MAX_COMETS) return;
     const comet = document.createElement('div');
     comet.classList.add('comet');
     const colors = ['blue', 'purple', 'white'];
-    const colorClass = colors[Math.floor(Math.random() * colors.length)];
-    comet.classList.add(colorClass);
-
+    comet.classList.add(colors[Math.floor(Math.random() * colors.length)]);
     const startFromLeft = Math.random() < 0.5;
     if (startFromLeft) {
-      comet.style.left = `-10px`;
+      comet.style.left = '-10px';
       comet.style.top = `${Math.random() * 100}%`;
-      comet.style.transform = `rotate(45deg)`;
+      comet.style.transform = 'rotate(45deg)';
     } else {
-      comet.style.left = `100%`;
+      comet.style.left = '100%';
       comet.style.top = `${Math.random() * 100}%`;
-      comet.style.transform = `rotate(-45deg)`;
+      comet.style.transform = 'rotate(-45deg)';
     }
     comet.style.animationDuration = `${Math.random() * 0.5 + 1.5}s`;
     cometsContainer.appendChild(comet);
-    comet.addEventListener('animationend', () => {
-      comet.remove();
-    });
+    comet.addEventListener('animationend', () => comet.remove());
   }
 
   setInterval(createComet, COMET_INTERVAL);
@@ -197,27 +188,26 @@ function generateComets() {
   }
 }
 
-/* ------------------------------------------------------------------
-   Ниже — вместо initResumeCards() делаем setupTabs() +
-   можете добавить эффекты на саму .frame, если пожелаете.
------------------------------------------------------------------- */
-
-/** Настраиваем логику вкладок (панелей) */
+/**
+ * Включаем 3D-навигацию между панелями:
+ * - .panel-main: rotateY(0)
+ * - .panel-projects: rotateY(-90)
+ * - .panel-tech: rotateY(180)
+ * - .panel-about: rotateY(90)
+ *
+ * При вращении .frame на нужный угол соответствующая панель будет спереди.
+ */
 function setupTabs() {
-  // Находим все кнопки, у которых есть data-panel
-  const buttons = document.querySelectorAll('[data-panel]');
   const panels = document.querySelectorAll('.panel');
-  const frame = document.querySelector('.frame'); // будем вращать/трансформировать
+  const frame = document.querySelector('.frame');
+  const buttons = document.querySelectorAll('[data-panel]');
 
-  // Функция включения нужной панели
+  // Активируем одну панель, скрываем остальные
   function activatePanel(panelName) {
-    // Сначала выключаем все
     panels.forEach((p) => {
       p.classList.remove('active');
       p.style.pointerEvents = 'none';
     });
-
-    // Включаем нужную
     const target = document.querySelector(`.panel-${panelName}`);
     if (target) {
       target.classList.add('active');
@@ -225,80 +215,71 @@ function setupTabs() {
     }
   }
 
-  // Пример анимации 3D при переходе
+  // Анимируем «поворот» .frame
   function goToPanel(panelName) {
     let rotateY = 0;
+    // По умолчанию пусть Z = 0
     let rotateX = 0;
-    let translateZ = 0;
 
-    // Главная панель
     if (panelName === 'main') {
       rotateY = 0;
-      rotateX = 0;
-      translateZ = 0;
-    }
-    else if (panelName === 'projects') {
-      // например, повернём вправо
-      rotateY = -90;
-      translateZ = -400;
-    }
-    else if (panelName === 'tech') {
-      // повернём влево
-      rotateY = 90;
-      translateZ = -400;
-    }
-    else if (panelName === 'about') {
-      // повернём вверх
-      rotateX = -90;
-      translateZ = -400;
+    } else if (panelName === 'projects') {
+      rotateY = 90;   // panel-projects на -90, значит повернуть .frame на +90
+    } else if (panelName === 'tech') {
+      rotateY = 180;  // panel-tech на 180, значит .frame тоже 180
+    } else if (panelName === 'about') {
+      rotateY = -90;  // panel-about на +90, значит .frame на -90
     }
 
-    // Делаем анимацию через anime.js
+    // Плавно крутим .frame
     anime({
       targets: frame,
       rotateY: rotateY,
       rotateX: rotateX,
-      translateZ: translateZ,
       duration: 1000,
       easing: 'easeInOutExpo',
+      // По окончании анимации — включаем нужную панель
+      begin: () => {
+        // Пока идёт анимация — убираем прошлую панель
+        panels.forEach(p => p.classList.remove('active'));
+      },
       complete: () => {
-        // По окончании анимации включаем нужную панель
         activatePanel(panelName);
       }
     });
   }
 
-  // Вешаем обработчики клика
-  buttons.forEach((btn) => {
+  // Назначим обработчики
+  buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const panelName = btn.getAttribute('data-panel');
       goToPanel(panelName);
     });
   });
 
-  // При загрузке включим главную
+  // Стартуем с главной
   activatePanel('main');
 }
 
-
 function initHoverEffects() {
-  const links = document.querySelectorAll('.contact-link, .tabs button, .back-btn');
-  links.forEach(link => {
-    link.addEventListener('mousemove', (e) => {
-      const rect = link.getBoundingClientRect();
+  // Подсветка при наведении на кнопки/ссылки
+  const hovers = document.querySelectorAll('.tabs button, .back-btn');
+  hovers.forEach(el => {
+    el.addEventListener('mousemove', (e) => {
+      const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      link.style.setProperty('--x', `${x}px`);
-      link.style.setProperty('--y', `${y}px`);
+      el.style.setProperty('--x', `${x}px`);
+      el.style.setProperty('--y', `${y}px`);
     });
   });
 }
 
-/** Главная точка входа */
+/* ===================== ЗАПУСК ВСЕГО ===================== */
 document.addEventListener('DOMContentLoaded', () => {
   const preloader = document.querySelector('.preloader');
 
-  // Когда окно полностью загружено (включая ресурсы)
+  // Прелоадер (3 секунды или пока ресурсы не загрузятся)
   window.addEventListener('load', () => {
     anime({
       targets: preloader,
@@ -314,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Звёздный фон
   initCanvas();
 
-  // Плавный переход «взрыва» к спокойному состоянию
+  // Взрыв звёзд → плавный спад
   setTimeout(() => {
     anime({
       targets: { factor: starExplosionFactor },
@@ -329,12 +310,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Кометы
   generateComets();
+
   // Планета
   initPlanet();
-  // Вращающийся круговой текст
+
+  // Текст вокруг планеты
   initCircularText();
-  // Вкладки
+
+  // 3D-навигация по вкладкам
   setupTabs();
-  // Hover-эффекты на кнопки/ссылки
+
+  // Hover-эффекты на кнопки
   initHoverEffects();
 });
