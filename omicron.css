@@ -4,6 +4,63 @@
   margin: 0;
   padding: 0;
 }
+.resume-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.resume-card {
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 15px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+}
+
+.resume-card::before,
+.resume-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  pointer-events: none;
+}
+
+.resume-card::before {
+  background: rgba(173, 216, 230, 0.1);
+  border: 1px solid rgba(173, 216, 230, 0.2);
+  transform: translateZ(-10px);
+}
+
+.resume-card::after {
+  background: rgba(0, 0, 139, 0.1);
+  border: 1px solid rgba(173, 216, 230, 0.2);
+  transform: translateZ(-20px) rotateY(180deg);
+}
+
+.resume-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 10px 20px rgba(173, 216, 230, 0.5);
+}
+
+.main-card {
+  grid-column: 1 / -1;
+  text-align: center;
+  background: rgba(25, 25, 112, 0.2);
+}
 
 /* Общие стили для body */
 html, body {
@@ -308,4 +365,128 @@ main {
   .circular-text .text-container span {
     font-size: 10px;
   }
+}
+
+/* Стили для секции резюме */
+.resume-section {
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resume-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  opacity: 0;
+  transform: translateY(50px);
+  animation: resumeEntrance 1s ease-out forwards;
+}
+
+@keyframes resumeEntrance {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resume-card {
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 15px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.resume-card:hover {
+  transform: translateY(-5px);
+}
+
+.position {
+  color: #7ec0ee;
+  font-size: 1.4rem;
+  margin: 1rem 0;
+}
+
+.timeline-item {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+  border-left: 2px solid #7ec0ee;
+}
+
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.skill {
+  background: rgba(126, 192, 238, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.cta-button {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 1.2rem;
+  background: linear-gradient(45deg, #7ec0ee, #4a90e2);
+  border-radius: 50px;
+  transition: transform 0.3s ease;
+}
+
+.cta-button:hover {
+  transform: scale(1.05);
+}
+
+.arrow {
+  display: inline-block;
+  margin-left: 1rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+
+@keyframes textFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resume-card h2, .resume-card h3, .resume-card p {
+  animation: textFadeIn 1s ease-out;
+}
+
+.cta-button {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 20px rgba(126, 192, 238, 0.5);
 }

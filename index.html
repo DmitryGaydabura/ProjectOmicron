@@ -1,191 +1,90 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Omicron Project</title>
-  <!-- Подключение CSS -->
-  <link rel="stylesheet" href="omicron.css" />
-  <!-- Подключение Three.js -->
+  <link rel="stylesheet" href="omicron.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" defer></script>
-
 </head>
 <body>
 
-<!-- Canvas для анимации звёзд -->
-<canvas id="starfield"></canvas>
+<section class="resume-section">
+  <div class="resume-content">
+    <!-- Блок с основной информацией -->
+    <div class="resume-card main-card">
+      <h2>Dmitry Gaydabura</h2>
+      <p class="position">Back-end Web Developer</p>
+      <div class="contacts">
+        <p>gaydabura.d@icloud.com</p>
+        <p>+38(098)041-12-80</p>
+      </div>
+    </div>
 
-<!-- Контейнер для Three.js-сцены (планета) -->
+    <!-- Блок "О себе" -->
+    <div class="resume-card">
+      <h3>Who am I?</h3>
+      <p>
+        3+ years of experience in web development. <br>
+        Specialization: building RESTful services with Java/Python. <br><br>
+        Skilled in frameworks such as Spring Boot, Django, and Flask. <br>
+        Experienced in working with relational (MySQL, PostgreSQL) and NoSQL (MongoDB) databases. <br>
+        Comfortable with cloud platforms (AWS, Azure) and containerization (Docker, Kubernetes). <br>
+        Familiar with CI/CD pipelines (Jenkins, GitLab CI) and agile methodologies. <br>
+        Passionate about learning new technologies, optimizing performance, and delivering robust, scalable solutions.
+      </p>
+    </div>
+
+    <!-- Опыт работы -->
+    <div class="resume-card">
+      <h3>Experience</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4>Andersen (2024-н.в.)</h4>
+          <p>Middle Java Developer</p>
+        </div>
+        <div class="timeline-item">
+          <h4>Mastercard & SymbolTransport LLC (2022-2024)</h4>
+          <p>Junior Java Developer</p>
+        </div>
+        <div class="timeline-item">
+          <h4>Vareger (2021-2022)</h4>
+          <p>Junior Java Developer</p>
+        </div>
+        <div class="timeline-item">
+          <h4>ProfIT Soft (2021)</h4>
+          <p>Trainee Java Developer</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Навыки -->
+    <div class="resume-card skills">
+      <h3>Tech Stack</h3>
+      <div class="skills-grid">
+        <span class="skill">Java</span>
+        <span class="skill">Spring Boot</span>
+        <span class="skill">Python</span>
+        <span class="skill">JS</span>
+        <span class="skill">TS</span>
+        <span class="skill">PostgreSQL</span>
+        <span class="skill">Data Science</span>
+        <span class="skill">AWS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<canvas id="starfield"></canvas>
 <div id="three-container">
-  <!-- Анимированная круговая надпись -->
   <div class="circular-text">
-     DeveLoped by Gaydabura Dmitry *
+    DeveLoped by Gaydabura Dmitry *
   </div>
 </div>
-
-<!-- Контейнер для комет -->
 <div class="comets"></div>
 
-<header>
-  <h1>Omicron Project</h1>
-  <p>Welcome to the eternity</p>
-</header>
-
-<!-- Основной контент -->
-<main>
-  <div class="letter-grid">
-    <!-- Пример одной буквы -->
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Α</span>
-        <span class="letter-name">Альфа</span>
-      </a>
-    </div>
-    <!-- Остальные буквы аналогично -->
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Β</span>
-        <span class="letter-name">Бета</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Γ</span>
-        <span class="letter-name">Гамма</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Δ</span>
-        <span class="letter-name">Дельта</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Ε</span>
-        <span class="letter-name">Эпсилон</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Ζ</span>
-        <span class="letter-name">Зета</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Η</span>
-        <span class="letter-name">Эта</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Θ</span>
-        <span class="letter-name">Тета</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Ι</span>
-        <span class="letter-name">Йота</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Κ</span>
-        <span class="letter-name">Каппа</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Λ</span>
-        <span class="letter-name">Лямбда</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Μ</span>
-        <span class="letter-name">Мю</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Ν</span>
-        <span class="letter-name">Ню</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Ξ</span>
-        <span class="letter-name">Кси</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <!-- Активная панель Омикрон -->
-      <a href="index.html" class="letter-link active">
-        <span class="greek-letter">Ο</span>
-        <span class="letter-name">Омикрон</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Π</span>
-        <span class="letter-name">Пи</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Ρ</span>
-        <span class="letter-name">Ро</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Σ</span>
-        <span class="letter-name">Сигма</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Τ</span>
-        <span class="letter-name">Тау</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Υ</span>
-        <span class="letter-name">Ипсилон</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Φ</span>
-        <span class="letter-name">Фи</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Χ</span>
-        <span class="letter-name">Хи</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Ψ</span>
-        <span class="letter-name">Пси</span>
-      </a>
-    </div>
-    <div class="letter-box">
-      <a href="#" class="letter-link inactive" onclick="return false;">
-        <span class="greek-letter">Ω</span>
-        <span class="letter-name">Омега</span>
-      </a>
-    </div>
-  </div>
-</main>
-
-<!-- Подключение JavaScript -->
 <script src="omicron.js" defer></script>
 </body>
 </html>

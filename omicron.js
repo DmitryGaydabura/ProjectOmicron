@@ -1,8 +1,8 @@
 // ========= ПАРАМЕТРЫ =========
 
-const NUM_STARS = 1000;        // Количество звёзд
-const COMET_INTERVAL = 4000;   // Интервал между появлениями комет (в мс)
-const MAX_COMETS = 10;         // Максимальное количество одновременно летящих комет
+const NUM_STARS = 2000;        // Количество звёзд
+const COMET_INTERVAL = 10;   // Интервал между появлениями комет (в мс)
+const MAX_COMETS = 100;         // Максимальное количество одновременно летящих комет
 
 // ========= ГЛОБАЛЬНЫЕ =========
 let canvas, ctx;       // для звёздного фона
@@ -23,9 +23,10 @@ function initCanvas() {
     stars.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      size: Math.random() * 2 + 1,  // 1..3 px
+      size: Math.random() * 3 + 1,  // 1..4 px
       alpha: Math.random(),         // начальная прозрачность
-      alphaChange: (Math.random() * 0.02) * (Math.random() > 0.5 ? 1 : -1)
+      alphaChange: (Math.random() * 0.02) * (Math.random() > 0.5 ? 1 : -1),
+      twinkleSpeed: Math.random() * 0.02 + 0.01 // скорость мерцания
     });
   }
 }
@@ -171,154 +172,6 @@ function initCircularText() {
   });
 }
 
-// ========= ОБНОВЛЕННЫЙ КОД ДЛЯ LETTER-BOXES =========
-function initLetterBoxes() {
-  const letterBoxes = document.querySelectorAll('.letter-box');
-  const globalMouse = { x: 0, y: 0 };
-  const boxStates = new Map();
-  let animationFrame;
-  const lerpFactor = 0.15;
-  const parallaxIntensity = 0.03;
-  const magnetPower = 0.15;
-
-  // Инициализация состояний
-  letterBoxes.forEach(box => {
-    boxStates.set(box, {
-      x: 0,
-      y: 0,
-      scale: 1,
-      isHovered: false,
-      targetX: 0,
-      targetY: 0,
-      targetScale: 1
-    });
-  });
-
-  // Плавное обновление
-  function smoothUpdate() {
-    let needsUpdate = false;
-
-    letterBoxes.forEach(box => {
-      const state = boxStates.get(box);
-
-      if (!state.isHovered) {
-        state.x += (state.targetX - state.x) * lerpFactor;
-        state.y += (state.targetY - state.y) * lerpFactor;
-        state.scale += (state.targetScale - state.scale) * lerpFactor;
-      }
-
-      const transform = `
-        translate(${state.x}px, ${state.y}px)
-        scale(${state.scale})
-      `;
-
-      if (box.style.transform !== transform) {
-        box.style.transform = transform;
-        needsUpdate = true;
-      }
-    });
-
-    if (needsUpdate) {
-      animationFrame = requestAnimationFrame(smoothUpdate);
-    } else {
-      animationFrame = null;
-    }
-  }
-
-  // Обработчик движения мыши
-  document.addEventListener('mousemove', (e) => {
-    globalMouse.x = e.clientX;
-    globalMouse.y = e.clientY;
-
-    letterBoxes.forEach(box => {
-      const state = boxStates.get(box);
-      if (state.isHovered) return;
-
-      const rect = box.getBoundingClientRect();
-      const boxCenterX = rect.left + rect.width/2;
-      const boxCenterY = rect.top + rect.height/2;
-
-      // Параллакс
-      const parallaxX = (globalMouse.x - window.innerWidth/2) * parallaxIntensity;
-      const parallaxY = (globalMouse.y - window.innerHeight/2) * parallaxIntensity;
-
-      // Магнетизм
-      const deltaX = globalMouse.x - boxCenterX;
-      const deltaY = globalMouse.y - boxCenterY;
-      const distance = Math.sqrt(deltaX**2 + deltaY**2);
-      const maxDistance = 250;
-      const force = Math.max(0, (1 - distance/maxDistance)) * magnetPower;
-
-      state.targetX = parallaxX + deltaX * force;
-      state.targetY = parallaxY + deltaY * force;
-      state.targetScale = 1 + force * 0.3;
-    });
-
-    if (!animationFrame) {
-      animationFrame = requestAnimationFrame(smoothUpdate);
-    }
-  });
-
-  // Обработчики hover
-  letterBoxes.forEach(box => {
-    const state = boxStates.get(box);
-
-    box.addEventListener('mouseenter', () => {
-      state.isHovered = true;
-      state.targetX = 0;
-      state.targetY = 0;
-      state.targetScale = 1.15;
-
-      anime({
-        targets: box,
-        translateZ: [state.z || 0, 20],
-        duration: 600,
-        easing: 'easeOutExpo',
-        update: (anim) => {
-          state.z = anim.animations[0].currentValue;
-        }
-      });
-    });
-
-    box.addEventListener('mouseleave', () => {
-      state.isHovered = false;
-
-      anime({
-        targets: box,
-        translateZ: 0,
-        duration: 800,
-        easing: 'easeOutElastic',
-        update: (anim) => {
-          state.z = anim.animations[0].currentValue;
-        }
-      });
-    });
-  });
-}
-// ========= УПРОЩЕННАЯ ПУЛЬСАЦИЯ =========
-function animatePulse() {
-  const boxes = document.querySelectorAll('.letter-box');
-
-  anime({
-    targets: boxes,
-    scale: [
-      { value: 1.05, duration: 1500, easing: 'easeInOutSine' },
-      { value: 1, duration: 2000, easing: 'easeOutElastic(1, .5)' }
-    ],
-    translateY: [
-      { value: -5, duration: 1500, easing: 'easeInOutSine' },
-      { value: 0, duration: 2000, easing: 'easeOutElastic(1, .5)' }
-    ],
-    boxShadow: [
-      { value: '0 0 30px rgba(100,149,237,0.3)', duration: 1500 },
-      { value: '0 8px 40px rgba(0,0,0,0.5)', duration: 2000 }
-    ],
-    delay: anime.stagger(150, { grid: [5, 5], from: 'center' }),
-    easing: 'easeInOutSine',
-    loop: false
-  });
-}
-
 // ================== ГЕНЕРАЦИЯ КОМЕТ ===============================
 function generateComets() {
   const cometsContainer = document.querySelector('.comets');
@@ -373,29 +226,6 @@ function generateComets() {
   }
 }
 
-// ================== АНИМАЦИЯ ПОЯВЛЕНИЯ СЕТКИ ================
-function initGridEntrance() {
-  const boxes = document.querySelectorAll('.letter-box');
-
-  anime({
-    targets: boxes,
-    translateY: [100, 0],
-    rotateX: [-90, 0],
-    rotateZ: [15, 0],
-    scale: [0.8, 1],
-    opacity: [0, 1],
-    duration: 1200,
-    delay: anime.stagger(80, { grid: [5, 5], from: 'center' }),
-    easing: 'spring(1, 80, 10, 0)',
-    complete: () => {
-      boxes.forEach(box => {
-        box.style.transform = 'none';
-      });
-      // Запускаем первую пульсацию после завершения входа
-      animatePulse();
-    }
-  });
-}
 
 
 function initPulseAnimation() {
@@ -406,27 +236,168 @@ function initPulseAnimation() {
   setInterval(animatePulse, 12000);
 }
 
+function initResumeCards() {
+  const cards = document.querySelectorAll('.resume-card, .cta-button');
+  const globalMouse = { x: 0, y: 0 };
+  const cardStates = new Map();
+  let animationFrame;
+  const lerpFactor = 0.15;
+  const parallaxIntensity = 0.03;
+  const magnetPower = 0.15;
+
+  cards.forEach(card => {
+    cardStates.set(card, {
+      x: 0,
+      y: 0,
+      scale: 1,
+      isHovered: false,
+      targetX: 0,
+      targetY: 0,
+      targetScale: 1
+    });
+  });
+
+  function smoothUpdate() {
+    let needsUpdate = false;
+    cards.forEach(card => {
+      const state = cardStates.get(card);
+      if (!state.isHovered) {
+        state.x += (state.targetX - state.x) * lerpFactor;
+        state.y += (state.targetY - state.y) * lerpFactor;
+        state.scale += (state.targetScale - state.scale) * lerpFactor;
+      }
+      const transform = `
+        translate(${state.x}px, ${state.y}px)
+        scale(${state.scale})
+      `;
+      if (card.style.transform !== transform) {
+        card.style.transform = transform;
+        needsUpdate = true;
+      }
+    });
+    if (needsUpdate) animationFrame = requestAnimationFrame(smoothUpdate);
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    globalMouse.x = e.clientX;
+    globalMouse.y = e.clientY;
+    cards.forEach(card => {
+      const state = cardStates.get(card);
+      if (state.isHovered) return;
+      const rect = card.getBoundingClientRect();
+      const boxCenterX = rect.left + rect.width/2;
+      const boxCenterY = rect.top + rect.height/2;
+      const parallaxX = (globalMouse.x - window.innerWidth/2) * parallaxIntensity;
+      const parallaxY = (globalMouse.y - window.innerHeight/2) * parallaxIntensity;
+      const deltaX = globalMouse.x - boxCenterX;
+      const deltaY = globalMouse.y - boxCenterY;
+      const distance = Math.sqrt(deltaX**2 + deltaY**2);
+      const maxDistance = 250;
+      const force = Math.max(0, (1 - distance/maxDistance)) * magnetPower;
+      state.targetX = parallaxX + deltaX * force;
+      state.targetY = parallaxY + deltaY * force;
+      state.targetScale = 1 + force * 0.3;
+    });
+    if (!animationFrame) animationFrame = requestAnimationFrame(smoothUpdate);
+  });
+
+  cards.forEach(card => {
+    const state = cardStates.get(card);
+    card.addEventListener('mouseenter', () => {
+      state.isHovered = true;
+      state.targetX = 0;
+      state.targetY = 0;
+      state.targetScale = 1.15;
+      anime({
+        targets: card,
+        translateZ: [state.z || 0, 20],
+        duration: 600,
+        easing: 'easeOutExpo',
+        update: (anim) => { state.z = anim.animations[0].currentValue; }
+      });
+    });
+    card.addEventListener('mouseleave', () => {
+      state.isHovered = false;
+      anime({
+        targets: card,
+        translateZ: 0,
+        duration: 800,
+        easing: 'easeOutElastic',
+        update: (anim) => { state.z = anim.animations[0].currentValue; }
+      });
+    });
+  });
+}
+
+// Обновлённые функции анимации
+function animatePulse() {
+  anime({
+    targets: '.resume-card',
+    scale: [
+      { value: 1.05, duration: 1500, easing: 'easeInOutSine' },
+      { value: 1, duration: 2000, easing: 'easeOutElastic(1, .5)' }
+    ],
+    translateY: [
+      { value: -5, duration: 1500, easing: 'easeInOutSine' },
+      { value: 0, duration: 2000, easing: 'easeOutElastic(1, .5)' }
+    ],
+    delay: anime.stagger(100),
+    loop: false
+  });
+}
+
+function initGridEntrance() {
+  anime({
+    targets: '.resume-card, .cta-button',
+    translateY: [100, 0],
+    rotateX: [-90, 0],
+    rotateZ: [15, 0],
+    scale: [0.8, 1],
+    opacity: [0, 1],
+    duration: 1200,
+    delay: anime.stagger(80),
+    easing: 'spring(1, 80, 10, 0)',
+    complete: () => {
+      document.querySelectorAll('.resume-card').forEach(card => {
+        card.style.transform = 'none';
+      });
+      animatePulse();
+    }
+  });
+}
+
 // ================== ЗАПУСК ВСЕГО ===============================
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Звёздный фон
   initCanvas();
   animateStars();
-
-  // 2. Кометы
   generateComets();
-
-  // 3. Планета (Three.js)
   initPlanet();
-
-  // 4. 3D-эффект при наведении на карточки
-  initLetterBoxes();
-
-  // 5. Кольцо текста (без анимации вращения)
+  initResumeCards();
   initCircularText();
-
-  // 6. Пульсация сетки
   initPulseAnimation();
-
-  // 7. Анимация появления сетки
   initGridEntrance();
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+  });
+
+  // Анимация элементов при скролле
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.resume-card').forEach(card => {
+    observer.observe(card);
+  });
 });
