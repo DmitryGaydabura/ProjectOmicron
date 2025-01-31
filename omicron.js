@@ -5,9 +5,12 @@
 let scene, camera, renderer;
 let planet, atmosphere;
 
-// Коэффициент «взрыва» звёзд, сперва 5 — затем анимированно к 1
+// Коэффициент «взрыва» звёзд (изначально 5, затем анимированно к 1)
 let starExplosionFactor = 5;
 
+/**
+ * Инициализация canvas для звёздного неба
+ */
 function initCanvas() {
   const canvas = document.getElementById('starfield');
   const ctx = canvas.getContext('2d');
@@ -64,6 +67,9 @@ function initCanvas() {
   animate();
 }
 
+/**
+ * Инициализация 3D-планеты (Three.js)
+ */
 function initPlanet() {
   const container = document.getElementById('three-container');
   scene = new THREE.Scene();
@@ -87,7 +93,7 @@ function initPlanet() {
   directionalLight.position.set(5, 3, 5);
   scene.add(directionalLight);
 
-  // Замените путь к текстуре при необходимости
+  // Ваш путь к текстуре
   const textureLoader = new THREE.TextureLoader();
   const planetTexture = textureLoader.load('assets/textures/Swamp.png');
 
@@ -126,6 +132,9 @@ function animatePlanet() {
   renderer.render(scene, camera);
 }
 
+/**
+ * Анимированный круговой текст вокруг планеты
+ */
 function initCircularText() {
   const circularTextElem = document.querySelector('.circular-text');
   if (!circularTextElem) return;
@@ -154,6 +163,9 @@ function initCircularText() {
   });
 }
 
+/**
+ * Генерация комет
+ */
 function generateComets() {
   const cometsContainer = document.querySelector('.comets');
   if (!cometsContainer) return;
@@ -189,80 +201,68 @@ function generateComets() {
 }
 
 /**
- * Включаем 3D-навигацию между панелями:
- * - .panel-main: rotateY(0)
- * - .panel-projects: rotateY(-90)
- * - .panel-tech: rotateY(180)
- * - .panel-about: rotateY(90)
- *
- * При вращении .frame на нужный угол соответствующая панель будет спереди.
+ * Переключение панелей с пиксельной анимацией
+ */
+/**
+ * Переключение панелей с новой анимацией
  */
 function setupTabs() {
   const panels = document.querySelectorAll('.panel');
-  const frame = document.querySelector('.frame');
+  let currentPanel = document.querySelector('.panel-main');
+
+  // На всякий случай убрать активность у всех
+  panels.forEach(p => p.classList.remove('active'));
+  currentPanel.classList.add('active');
+
+  // Исчезновение (fade-out)
+  function fadeOut(panel) {
+    return new Promise(resolve => {
+      panel.classList.add('fade-out');
+      setTimeout(() => {
+        panel.classList.remove('active', 'fade-out');
+        resolve();
+      }, 500); // совпадает с 0.5s в CSS
+    });
+  }
+
+  // Появление (fade-in)
+  function fadeIn(panel) {
+    return new Promise(resolve => {
+      panel.classList.add('active', 'fade-in');
+      setTimeout(() => {
+        panel.classList.remove('fade-in');
+        resolve();
+      }, 500);
+    });
+  }
+
+  async function switchPanel(targetPanel) {
+    if (targetPanel === currentPanel) return;
+    const oldPanel = currentPanel;
+    currentPanel = null; // блокируем, пока идёт анимация
+
+    await fadeOut(oldPanel);
+    await fadeIn(targetPanel);
+
+    currentPanel = targetPanel;
+  }
+
+  // События для кнопок
   const buttons = document.querySelectorAll('[data-panel]');
-
-  // Активируем одну панель, скрываем остальные
-  function activatePanel(panelName) {
-    panels.forEach((p) => {
-      p.classList.remove('active');
-      p.style.pointerEvents = 'none';
-    });
-    const target = document.querySelector(`.panel-${panelName}`);
-    if (target) {
-      target.classList.add('active');
-      target.style.pointerEvents = 'auto';
-    }
-  }
-
-  // Анимируем «поворот» .frame
-  function goToPanel(panelName) {
-    let rotateY = 0;
-    // По умолчанию пусть Z = 0
-    let rotateX = 0;
-
-    if (panelName === 'main') {
-      rotateY = 0;
-    } else if (panelName === 'projects') {
-      rotateY = 90;   // panel-projects на -90, значит повернуть .frame на +90
-    } else if (panelName === 'tech') {
-      rotateY = 180;  // panel-tech на 180, значит .frame тоже 180
-    } else if (panelName === 'about') {
-      rotateY = -90;  // panel-about на +90, значит .frame на -90
-    }
-
-    // Плавно крутим .frame
-    anime({
-      targets: frame,
-      rotateY: rotateY,
-      rotateX: rotateX,
-      duration: 1000,
-      easing: 'easeInOutExpo',
-      // По окончании анимации — включаем нужную панель
-      begin: () => {
-        // Пока идёт анимация — убираем прошлую панель
-        panels.forEach(p => p.classList.remove('active'));
-      },
-      complete: () => {
-        activatePanel(panelName);
-      }
-    });
-  }
-
-  // Назначим обработчики
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const panelName = btn.getAttribute('data-panel');
-      goToPanel(panelName);
+      const target = document.querySelector(`.panel-${panelName}`);
+      if (target) {
+        switchPanel(target);
+      }
     });
   });
-
-  // Стартуем с главной
-  activatePanel('main');
 }
-
+/**
+ * Hover-эффекты на кнопки
+ */
 function initHoverEffects() {
-  // Подсветка при наведении на кнопки/ссылки
   const hovers = document.querySelectorAll('.tabs button, .back-btn');
   hovers.forEach(el => {
     el.addEventListener('mousemove', (e) => {
@@ -275,11 +275,13 @@ function initHoverEffects() {
   });
 }
 
-/* ===================== ЗАПУСК ВСЕГО ===================== */
+/**
+ * Запуск
+ */
 document.addEventListener('DOMContentLoaded', () => {
   const preloader = document.querySelector('.preloader');
 
-  // Прелоадер (3 секунды или пока ресурсы не загрузятся)
+  // Прелоадер
   window.addEventListener('load', () => {
     anime({
       targets: preloader,
@@ -295,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Звёздный фон
   initCanvas();
 
-  // Взрыв звёзд → плавный спад
+  // Постепенный спад «взрыва» звёзд
   setTimeout(() => {
     anime({
       targets: { factor: starExplosionFactor },
@@ -317,9 +319,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Текст вокруг планеты
   initCircularText();
 
-  // 3D-навигация по вкладкам
+  // Переключение вкладок (с «пиксельным» эффектом)
   setupTabs();
 
   // Hover-эффекты на кнопки
   initHoverEffects();
 });
+
+

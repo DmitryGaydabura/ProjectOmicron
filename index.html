@@ -28,52 +28,51 @@
 <!-- Кометы -->
 <div class="comets"></div>
 
-<!-- 3D-сцена -->
+<!-- 3D-сцена с "кубом" -->
 <div class="scene">
-  <!-- Полупрозрачная белая рамка (контейнер для панелей) -->
   <div class="frame">
 
-    <!-- ПАНЕЛЬ №1: Главная -->
-    <section class="panel panel-main">
-      <!-- Анимированная планета (справа/слева - как угодно) -->
+    <!-- Панель №1: Главная -->
+    <section class="panel panel-main active">
+      <!-- 3D-планета -->
       <div id="three-container">
         <div class="circular-text">
           DeveLoped by Gaydabura Dmitry *
         </div>
       </div>
 
-      <!-- Имя и должность (ТЕПЕРЬ СЛЕВА ВНИЗУ) -->
+      <!-- Имя + должность -->
       <div class="hero-name">
         <h1>DMITRY GAYDABURA</h1>
         <p>Backend Architect</p>
       </div>
 
-      <!-- Вкладки (пусть будут справа вверху) -->
+      <!-- Вкладки (навигация) -->
       <nav class="tabs">
-        <button data-panel="projects">Проекты</button>
-        <button data-panel="tech">Технологии</button>
-        <button data-panel="about">Кто я</button>
+        <button data-panel="projects">Projects</button>
+        <button data-panel="tech">Tech Stack</button>
+        <button data-panel="about">Who am I</button>
       </nav>
     </section>
 
-    <!-- ПАНЕЛЬ №2: Проекты -->
+    <!-- Панель №2: Проекты -->
     <section class="panel panel-projects">
       <h2>Мои проекты</h2>
-      <p>Список / описание проектов, ссылки и т.д.</p>
+      <p>Здесь вы можете рассказать о своих проектах, привести ссылки и т.д.</p>
       <button class="back-btn" data-panel="main">На главную</button>
     </section>
 
-    <!-- ПАНЕЛЬ №3: Технологии -->
+    <!-- Панель №3: Технологии -->
     <section class="panel panel-tech">
       <h2>Технологии</h2>
-      <p>Ваш стек, фреймворки, инструменты и т.д.</p>
+      <p>Ваш стек, используемые фреймворки, инструменты и т.д.</p>
       <button class="back-btn" data-panel="main">На главную</button>
     </section>
 
-    <!-- ПАНЕЛЬ №4: Кто я -->
+    <!-- Панель №4: Кто я -->
     <section class="panel panel-about">
       <h2>Кто я</h2>
-      <p>Немного о себе, опыт, пути развития и прочее.</p>
+      <p>Немного о себе, о профессиональном пути, достижениях и прочее.</p>
       <button class="back-btn" data-panel="main">На главную</button>
     </section>
 

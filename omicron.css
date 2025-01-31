@@ -6,7 +6,7 @@
   --cyber-green: #00ff9d;
 }
 
-/* Сброс */
+/* СБРОС */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -17,7 +17,7 @@ body {
   font-family: 'Inter', sans-serif;
   background: var(--space-black);
   color: rgba(255,255,255,0.9);
-  overflow: hidden; /* скрываем прокрутку, если не нужна */
+  overflow: hidden;
 }
 
 /* ====== ПРЕЛОАДЕР ====== */
@@ -73,26 +73,22 @@ body {
   animation: textGlow 2s ease-in-out infinite;
 }
 
-/* ====== СЦЕНА ДЛЯ 3D-ПЕРЕХОДОВ ====== */
+/* ====== СЦЕНА ДЛЯ 3D-ПЛАНЕТЫ ====== */
 .scene {
   width: 100vw;
   height: 100vh;
   position: relative;
-  perspective: 1200px; /* «глубина» сцены */
-  z-index: 10; /* выше звёздного холста */
+  z-index: 10;
 }
 
-/* Белая полупрозрачная рамка (80% высоты/ширины) */
 .frame {
   width: 80vw;
   height: 80vh;
   border: 1px solid rgba(255,255,255,0.5);
-  background: rgba(255,255,255,0.04); /* почти прозрачный белый фон */
-  margin: 10vh auto; /* центрируем */
+  background: rgba(255,255,255,0.04);
+  margin: 10vh auto;
   position: relative;
-  transform-style: preserve-3d;
-  transition: transform 1s ease; /* плавный переход */
-  overflow: hidden; /* чтобы контент панелей не вылезал за границы */
+  overflow: hidden;
 }
 
 /* ====== ПАНЕЛИ ====== */
@@ -100,48 +96,24 @@ body {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(5px);
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Немного полупрозрачного фона, чтобы виден был фон позади */
-  background: rgba(255,255,255,0.02);
-  backdrop-filter: blur(5px);
-  /* Каждая панель на своем месте в «кубе» (см. ниже) */
-  /* Сначала все скрыты */
+
   opacity: 0;
   pointer-events: none;
+  transition: opacity 0.4s ease;
 }
-
-/**
- * Для эффекта «куба»:
- * - .panel-main смотрит «вперёд»
- * - .panel-projects смещена на правую грань (rotateY(-90deg))
- * - .panel-tech на заднюю грань (rotateY(180deg))
- * - .panel-about на левую грань (rotateY(90deg))
- * - А translateZ(...) чуть выносим «наружу», чтобы камера видела их
- */
-.panel-main {
-  transform: rotateY(0deg) translateZ(350px);
-}
-.panel-projects {
-  transform: rotateY(-90deg) translateZ(350px);
-}
-.panel-tech {
-  transform: rotateY(180deg) translateZ(350px);
-}
-.panel-about {
-  transform: rotateY(90deg) translateZ(350px);
-}
-
-/* Когда панель активна, она кликабельна и видна */
 .panel.active {
   opacity: 1;
   pointer-events: auto;
-  transition: opacity 0.5s ease;
 }
 
-/* ====== Навигация (вкладки) ====== */
+/* ====== ВКЛАДКИ ====== */
 .tabs {
   position: absolute;
   top: 20px; right: 20px;
@@ -161,8 +133,6 @@ body {
 .tabs button:hover {
   background: rgba(255,255,255,0.1);
 }
-
-/* Кнопка Назад */
 .back-btn {
   position: absolute;
   top: 20px; right: 20px;
@@ -178,7 +148,7 @@ body {
   background: rgba(255,255,255,0.1);
 }
 
-/* ====== Имя слева внизу ====== */
+/* ====== ИМЯ ВНИЗУ СЛЕВА ====== */
 .hero-name {
   position: absolute;
   left: 20px;
@@ -195,18 +165,19 @@ body {
   font-size: 1rem;
 }
 
-/* ====== ПЛАНЕТА ====== */
+/* ====== 3D-ПЛАНЕТА ====== */
 #three-container {
   position: absolute;
   bottom: 20px;
   right: 20px;
   width: 200px;
   height: 200px;
-  pointer-events: none; /* чтобы клики шли сквозь */
+  pointer-events: none;
 }
 .circular-text {
   position: absolute;
-  bottom: 0px; right: 1px; width: 100%; height: 100%;
+  bottom: 0px; right: 1px;
+  width: 100%; height: 100%;
   font-family: 'Space Mono', monospace;
   color: rgba(255,255,255,0.7);
   overflow: hidden;
@@ -232,7 +203,7 @@ body {
   transform-style: preserve-3d;
 }
 
-/* ====== ЗВЁЗДНОЕ НЕБО И КОМЕТЫ ====== */
+/* ====== ЗВЁЗДНОЕ НЕБО, КОМЕТЫ ====== */
 #starfield {
   position: fixed;
   top: 0; left: 0;
@@ -265,6 +236,7 @@ body {
   background: #ffffff;
   box-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff;
 }
+
 @keyframes fly {
   100% {
     transform: translateX(-100vw) translateY(100vh);
@@ -272,16 +244,7 @@ body {
   }
 }
 
-/* ====== KEYFRAMES / ANIMATIONS ====== */
-@keyframes hologramPulse {
-  0%   { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
-  50%  { opacity: 0.1; transform: translate(-50%, -50%) scale(1.2); }
-  100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
-}
-@keyframes textGlow {
-  0%,100% { opacity: 0.8; text-shadow: 0 0 10px var(--neon-blue); }
-  50%     { opacity: 1;   text-shadow: 0 0 20px var(--neon-blue); }
-}
+/* ====== ПРОЧИЕ АНИМАЦИИ ====== */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -290,16 +253,45 @@ body {
   0%   { transform: translateX(-100%) rotate(45deg); }
   100% { transform: translateX(200%)  rotate(45deg); }
 }
+@keyframes textGlow {
+  0%,100% { opacity: 0.8; text-shadow: 0 0 10px var(--neon-blue); }
+  50%     { opacity: 1;   text-shadow: 0 0 20px var(--neon-blue); }
+}
 @keyframes rotateText {
   0%   { transform: rotate(0deg); }
-  100% { transform: rotate(-360deg); } /* против часовой */
+  100% { transform: rotate(-360deg); }
 }
-.hologram-effect {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 150%; height: 150%;
-  background: radial-gradient(circle, rgba(0,243,255,0.15) 0%, rgba(0,243,255,0) 70%);
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  animation: hologramPulse 8s linear infinite;
+
+/* Новая анимация для исчезновения */
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
 }
+
+/* Новая анимация для появления */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Применяем анимации к панелям */
+.panel.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+.panel.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
