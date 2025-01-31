@@ -326,4 +326,58 @@ document.addEventListener('DOMContentLoaded', () => {
   initHoverEffects();
 });
 
+/**
+ * Инициализация анимаций прогресс-баров
+ */
+function initSkillBars() {
+  const bars = document.querySelectorAll('.bar-fill');
+  bars.forEach(bar => {
+    const width = bar.style.width;
+    bar.style.width = '0';
+    setTimeout(() => {
+      bar.style.width = width;
+    }, 500);
+  });
+}
+
+/**
+ * Инициализация карусели сертификатов
+ */
+function initCertificates() {
+  const carousel = document.querySelector('.certificate-carousel');
+  if (!carousel) return;
+
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  carousel.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - carousel.offsetLeft;
+    scrollLeft = carousel.scrollLeft;
+  });
+
+  carousel.addEventListener('mouseleave', () => {
+    isDown = false;
+  });
+
+  carousel.addEventListener('mouseup', () => {
+    isDown = false;
+  });
+
+  carousel.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - carousel.offsetLeft;
+    const walk = (x - startX) * 2;
+    carousel.scrollLeft = scrollLeft - walk;
+  });
+}
+
+// Обновить вызовы в конце DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  // ... существующий код ...
+  initSkillBars();
+  initCertificates();
+});
 
